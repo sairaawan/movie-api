@@ -37,6 +37,6 @@ public class MovieServiceImpl implements MovieService{
 
     @Override
     public List<Movie> fetchMoviesListByYear(int year) {
-        return movieRepository.findByFirstYear(year);
+        return movieRepository.findByYear(year);
     }
 }
