@@ -1,14 +1,51 @@
 package com.ssp.movie.api.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.ssp.movie.api.entity.Movie;
+import com.ssp.movie.api.service.MovieService;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 public class MovieController {
+    @Autowired
+    MovieService movieService;
+
+    private final Logger LOGGER =
+            LoggerFactory.getLogger(MovieController.class);
+
+    @PostMapping("/movies")
+    public Movie saveDepartment(@RequestBody Movie movie) {
+        LOGGER.info("Inside saveMovie of MovieController");
+        return movieService.saveMovie(movie);
+    }
 
     @GetMapping("/")
     public String Welcome() {
-        return "Hello";
+        return "Welcome to movies";
+    }
+
+    @GetMapping("/movies/page/{page}")
+    public List<Movie> fetchMoviesListByRatingSorted(@PathVariable("page") int page) {
+        LOGGER.info("Inside fetchMoviesListByRatingSorted of MovieController Per Page");
+
+        return movieService.fetchMoviesListByRatingSorted(page);
+    }
+
+    @GetMapping("/movies/rating/{rating}")
+    public List<Movie> fetchMoviesListByRatings(@PathVariable("rating") int page) {
+        LOGGER.info("Inside fetchMoviesListByRatings of MovieController");
+        return movieService.fetchMoviesListByRatings(page);
+    }
+
+    @GetMapping("/movies/year/{year}")
+    public List<Movie> fetchMoviesListByYear(@PathVariable("year") int year) {
+        LOGGER.info("Inside fetchMovieListByYear of MovieController");
+        return movieService.fetchMoviesListByYear(year);
     }
 
 }
