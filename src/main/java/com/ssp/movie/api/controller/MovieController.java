@@ -29,18 +29,22 @@ public class MovieController {
         return "Welcome to movies";
     }
 
+//   Find 3 movies per page, given page number, ordered by rating
+
     @GetMapping("/movies/page/{page}")
     public List<Movie> fetchMoviesListByRatingSorted(@PathVariable("page") int page) {
         LOGGER.info("Inside fetchMoviesListByRatingSorted of MovieController Per Page");
-
         return movieService.fetchMoviesListByRatingSorted(page);
     }
+// Find all movies given a rating number
 
     @GetMapping("/movies/rating/{rating}")
-    public List<Movie> fetchMoviesListByRatings(@PathVariable("rating") int page) {
+    public List<Movie> fetchMoviesListByRatings(@PathVariable("rating") int rating) {
         LOGGER.info("Inside fetchMoviesListByRatings of MovieController");
-        return movieService.fetchMoviesListByRatings(page);
+        return movieService.fetchMoviesListByRatings(rating);
     }
+
+//    Find by year, returning 3 movie records based on rating
 
     @GetMapping("/movies/year/{year}")
     public List<Movie> fetchMoviesListByYear(@PathVariable("year") int year) {
