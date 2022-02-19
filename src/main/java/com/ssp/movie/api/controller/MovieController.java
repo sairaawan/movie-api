@@ -58,8 +58,8 @@ public class MovieController {
 //    Get movies between two dates localhost:8080/movies/year?startDate=2021-01-01&endDate=2021-12-31
 
     @GetMapping("/movies/year")
-    public List<Movie> getLaptopsByCreatedDate (@RequestParam Date startDate, @RequestParam Date endDate) {
-        return movieService.findByCreatedAtBetween(startDate, endDate);
+    public List<Movie> getLaptopsByCreatedDate (@RequestParam int start, @RequestParam int end) {
+        return movieService.findByYearBetween(start, end);
     }
 
 }

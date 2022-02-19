@@ -14,5 +14,5 @@ public interface MovieService {
 
    public List<Movie> fetchMoviesListByYear(int year);
 
-   public List<Movie> findByCreatedAtBetween(Date startDate, Date endDate);
+   public List<Movie> findByYearBetween(int start, int end);
 }

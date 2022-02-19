@@ -18,6 +18,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     @Query(nativeQuery = true, value = "SELECT * FROM Movie s WHERE s.year = :year ORDER BY rating DESC LIMIT 3")
     List<Movie> findByYear(@Param("year") int year);
 
-    List<Movie> findByCreatedAtBetween(Date startDate, Date endDate);
+//    List<Movie> findByCreatedAtBetween(Date startDate, Date endDate);
+
+     List<Movie> findByYearBetween(int start, int end);
 
 }

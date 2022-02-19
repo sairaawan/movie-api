@@ -43,7 +43,7 @@ public class MovieServiceImpl implements MovieService{
     }
 
     @Override
-    public List<Movie> findByCreatedAtBetween(Date startDate, Date endDate) {
-        return movieRepository.findByCreatedAtBetween(startDate, endDate);
+    public List<Movie> findByYearBetween(int start, int end) {
+        return movieRepository.findByYearBetween(start, end);
     }
 }
