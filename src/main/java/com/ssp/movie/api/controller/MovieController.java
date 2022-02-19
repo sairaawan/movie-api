@@ -4,8 +4,11 @@ import com.ssp.movie.api.entity.Movie;
 import com.ssp.movie.api.service.MovieService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,13 @@ public class MovieController {
     public List<Movie> fetchMoviesListByYear(@PathVariable("year") int year) {
         LOGGER.info("Inside fetchMovieListByYear of MovieController");
         return movieService.fetchMoviesListByYear(year);
+    }
+
+//    Get movies between two dates localhost:8080/movies/year?startDate=2021-01-01&endDate=2021-12-31
+
+    @GetMapping("/movies/year")
+    public List<Movie> getLaptopsByCreatedDate (@RequestParam Date startDate, @RequestParam Date endDate) {
+        return movieService.findByCreatedAtBetween(startDate, endDate);
     }
 
 }
