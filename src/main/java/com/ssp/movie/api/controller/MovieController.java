@@ -18,6 +18,10 @@ public class MovieController {
     @Autowired
     MovieService movieService;
 
+    private final double MINIMUM_RATING = 8.0;
+    private final int MINIMUM_VOTES = 1000;
+
+
     private final Logger LOGGER =
             LoggerFactory.getLogger(MovieController.class);
 
@@ -44,7 +48,7 @@ public class MovieController {
     @GetMapping("/movies/rating/{rating}")
     public List<Movie> fetchMoviesListByRatings(@PathVariable("rating") int rating) {
         LOGGER.info("Inside fetchMoviesListByRatings of MovieController");
-        return movieService.fetchMoviesListByAverageRating(page);
+        return movieService.fetchMoviesListByAverageRating(rating);
 
     }
 
@@ -53,7 +57,7 @@ public class MovieController {
     @GetMapping("/movies/year/{year}")
     public ResponseEntity fetchMoviesListByYear(@PathVariable("year") int year) {
         LOGGER.info("Inside fetchMovieListByYear of MovieController");
-        List<Movie> movies = movieService.fetchMoviesListByReleaseYear(year);
+        List<Movie> movies = movieService.fetchMoviesListByReleaseYear(year, MINIMUM_RATING, MINIMUM_VOTES);
         return new ResponseEntity<>(movies, HttpStatus.OK);
     }
 
@@ -61,7 +65,7 @@ public class MovieController {
 
     @GetMapping("/movies/year")
     public List<Movie> getLaptopsByCreatedDate (@RequestParam int start, @RequestParam int end) {
-        return movieService.findByYearBetween(start, end);
+        return movieService.findByReleaseYearBetween(start, end);
     }
 
 }

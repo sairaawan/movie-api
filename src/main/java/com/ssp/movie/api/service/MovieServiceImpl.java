@@ -38,12 +38,12 @@ public class MovieServiceImpl implements MovieService{
     }
 
     @Override
-    public List<Movie> fetchMoviesListByReleaseYear(int year) {
-        return movieRepository.findByReleaseYear(year);
+    public List<Movie> fetchMoviesListByReleaseYear(int year, double minimumRating, int minimumVotes) {
+        return movieRepository.findByReleaseYear(year, minimumRating, minimumVotes);
     }
 
     @Override
-    public List<Movie> findByYearBetween(int start, int end) {
-        return movieRepository.findByYearBetween(start, end);
+    public List<Movie> findByReleaseYearBetween(int start, int end) {
+        return movieRepository.findByReleaseYearBetween(start, end);
     }
 }

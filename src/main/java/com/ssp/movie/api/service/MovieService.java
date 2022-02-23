@@ -12,8 +12,8 @@ public interface MovieService {
 
    public  List<Movie> fetchMoviesListByAverageRating(int rating);
 
-   public List<Movie> fetchMoviesListByReleaseYear(int year);
+   public List<Movie> fetchMoviesListByReleaseYear(int year, double minimumRating, int minimumVotes);
 
-   public List<Movie> findByYearBetween(int start, int end);
+   public List<Movie> findByReleaseYearBetween(int start, int end);
 
 }
