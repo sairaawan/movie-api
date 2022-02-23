@@ -12,13 +12,13 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
-    @Query("select s from Movie s where s.rating= ?1")
-    List<Movie> getMovieByRating(int rating);
+    @Query("select s from Movie s where s.averageRating= ?1")
+    List<Movie> getMovieByAverageRating(double averageRating);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM Movie s WHERE s.year = :year ORDER BY rating DESC LIMIT 3")
-    List<Movie> findByYear(@Param("year") int year);
+    @Query(nativeQuery = true, value = "SELECT * FROM Movie s WHERE s.releaseYear = :year ORDER BY rating DESC LIMIT 3")
+    List<Movie> findByReleaseYear(@Param("year") int year);
 
-//    List<Movie> findByCreatedAtBetween(Date startDate, Date endDate);
+//  List<Movie> findByCreatedAtBetween(Date startDate, Date endDate);
 
      List<Movie> findByYearBetween(int start, int end);
 

@@ -10,9 +10,10 @@ public interface MovieService {
 
   public Movie saveMovie(Movie movie);
 
-   public  List<Movie> fetchMoviesListByRatings(int rating);
+   public  List<Movie> fetchMoviesListByAverageRating(int rating);
 
-   public List<Movie> fetchMoviesListByYear(int year);
+   public List<Movie> fetchMoviesListByReleaseYear(int year);
 
    public List<Movie> findByYearBetween(int start, int end);
+
 }

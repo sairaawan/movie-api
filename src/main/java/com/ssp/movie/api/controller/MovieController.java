@@ -44,15 +44,17 @@ public class MovieController {
     @GetMapping("/movies/rating/{rating}")
     public List<Movie> fetchMoviesListByRatings(@PathVariable("rating") int rating) {
         LOGGER.info("Inside fetchMoviesListByRatings of MovieController");
-        return movieService.fetchMoviesListByRatings(rating);
+        return movieService.fetchMoviesListByAverageRating(page);
+
     }
 
 //    Find by year, returning 3 movie records based on rating
 
     @GetMapping("/movies/year/{year}")
-    public List<Movie> fetchMoviesListByYear(@PathVariable("year") int year) {
+    public ResponseEntity fetchMoviesListByYear(@PathVariable("year") int year) {
         LOGGER.info("Inside fetchMovieListByYear of MovieController");
-        return movieService.fetchMoviesListByYear(year);
+        List<Movie> movies = movieService.fetchMoviesListByReleaseYear(year);
+        return new ResponseEntity<>(movies, HttpStatus.OK);
     }
 
 //    Get movies between two dates localhost:8080/movies/year?startDate=2021-01-01&endDate=2021-12-31
