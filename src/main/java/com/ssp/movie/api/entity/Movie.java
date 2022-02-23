@@ -6,10 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -19,11 +16,13 @@ import java.util.Date;
 @Builder
 public class Movie {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long movieId;
-    private String name;
-    private String genre;
-    private int year;
-    private int rating;
-
+ //   @GeneratedValue(strategy = GenerationType.AUTO)
+    private String movieId;
+    private String movieType;
+    private String movieName;
+    private int releaseYear;
+    private int runningTime;
+    private String movieGenre;
+    private double averageRating;
+    private int numberOfVotes;
 }

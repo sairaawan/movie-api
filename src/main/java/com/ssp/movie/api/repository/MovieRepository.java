@@ -10,8 +10,9 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
-    List<Movie> findByYear(int year);
+    @Query("select s from Movie s where s.releaseYear= ?1")
+    List<Movie> findByReleaseYear(int year);
 
-    @Query("select s from Movie s where s.rating= ?1")
-    List<Movie> getMovieByRating(int rating);
+    @Query("select s from Movie s where s.averageRating= ?1")
+    List<Movie> getMovieByAverageRating(double averageRating);
 }

@@ -4,6 +4,8 @@ import com.ssp.movie.api.entity.Movie;
 import com.ssp.movie.api.service.MovieService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,13 +41,15 @@ public class MovieController {
     @GetMapping("/movies/rating/{rating}")
     public List<Movie> fetchMoviesListByRatings(@PathVariable("rating") int page) {
         LOGGER.info("Inside fetchMoviesListByRatings of MovieController");
-        return movieService.fetchMoviesListByRatings(page);
+        return movieService.fetchMoviesListByAverageRating(page);
     }
 
     @GetMapping("/movies/year/{year}")
-    public List<Movie> fetchMoviesListByYear(@PathVariable("year") int year) {
+    public ResponseEntity fetchMoviesListByYear(@PathVariable("year") int year) {
         LOGGER.info("Inside fetchMovieListByYear of MovieController");
-        return movieService.fetchMoviesListByYear(year);
+        List<Movie> movies = movieService.fetchMoviesListByReleaseYear(year);
+        return new ResponseEntity<>(movies, HttpStatus.OK);
+       // return movieService.fetchMoviesListByReleaseYear(year);
     }
 
 }

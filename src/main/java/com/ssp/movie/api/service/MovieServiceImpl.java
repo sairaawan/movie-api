@@ -18,7 +18,7 @@ public class MovieServiceImpl implements MovieService{
 
     @Override
     public List<Movie>fetchMoviesListByRatingSorted(int page) {
-        Pageable sortByRating= PageRequest.of(page,3, Sort.by("rating"));
+        Pageable sortByRating= PageRequest.of(page,3, Sort.by("averageRating"));
         List<Movie> movies
                 = movieRepository.findAll(sortByRating).getContent();
        return movies;
@@ -31,12 +31,12 @@ public class MovieServiceImpl implements MovieService{
     }
 
     @Override
-    public List<Movie> fetchMoviesListByRatings(int rating) {
-        return movieRepository.getMovieByRating(rating);
+    public List<Movie> fetchMoviesListByAverageRating(int rating) {
+        return movieRepository.getMovieByAverageRating(rating);
     }
 
     @Override
-    public List<Movie> fetchMoviesListByYear(int year) {
-        return movieRepository.findByYear(year);
+    public List<Movie> fetchMoviesListByReleaseYear(int year) {
+        return movieRepository.findByReleaseYear(year);
     }
 }
