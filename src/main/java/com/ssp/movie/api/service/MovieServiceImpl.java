@@ -23,7 +23,7 @@ public class MovieServiceImpl implements MovieService{
         List<Movie> movie =
                 movieRepository.findAll(sortByRating).getContent();
         if(movie.size()==0) {
-            throw new MovieNotFoundException("Movie not available");
+            throw new MovieNotFoundException("Movie not available.Enter correct page no");
         }
 
         return  movie;
@@ -39,7 +39,7 @@ public class MovieServiceImpl implements MovieService{
     public List<Movie> fetchMoviesListByAverageRating(int rating) throws MovieNotFoundException {
        List<Movie> movie =movieRepository.getMovieByAverageRating(rating);
         if(movie.size()==0) {
-            throw new MovieNotFoundException("Movie not available");
+            throw new MovieNotFoundException("Movie not available. Enter correct rating");
         }
         return movie;
     }
@@ -48,7 +48,7 @@ public class MovieServiceImpl implements MovieService{
     public List<Movie> fetchMoviesListByReleaseYear(int year, double minimumRating, int minimumVotes) throws MovieNotFoundException {
         List<Movie> movie = movieRepository.findByReleaseYear(year, minimumRating, minimumVotes);
         if(movie.size()==0) {
-            throw new MovieNotFoundException("Movie not available");
+            throw new MovieNotFoundException("Movie not available. Enter correct year");
         }
         return movie;
     }
