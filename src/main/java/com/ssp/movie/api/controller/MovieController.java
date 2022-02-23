@@ -1,6 +1,7 @@
 package com.ssp.movie.api.controller;
 
 import com.ssp.movie.api.entity.Movie;
+import com.ssp.movie.api.error.MovieNotFoundException;
 import com.ssp.movie.api.service.MovieService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +40,14 @@ public class MovieController {
 //   Find 3 movies per page, given page number, ordered by rating
 
     @GetMapping("/movies/page/{page}")
-    public List<Movie> fetchMoviesListByRatingSorted(@PathVariable("page") int page) {
+    public List<Movie> fetchMoviesListByRatingSorted(@PathVariable("page") int page) throws MovieNotFoundException {
         LOGGER.info("Inside fetchMoviesListByRatingSorted of MovieController Per Page");
         return movieService.fetchMoviesListByRatingSorted(page);
     }
 // Find all movies given a rating number
 
     @GetMapping("/movies/rating/{rating}")
-    public List<Movie> fetchMoviesListByRatings(@PathVariable("rating") int rating) {
+    public List<Movie> fetchMoviesListByRatings(@PathVariable("rating") int rating) throws MovieNotFoundException {
         LOGGER.info("Inside fetchMoviesListByRatings of MovieController");
         return movieService.fetchMoviesListByAverageRating(rating);
 
@@ -55,7 +56,7 @@ public class MovieController {
 //    Find by year, returning 3 movie records based on rating
 
     @GetMapping("/movies/year/{year}")
-    public ResponseEntity fetchMoviesListByYear(@PathVariable("year") int year) {
+    public ResponseEntity fetchMoviesListByYear(@PathVariable("year") int year) throws MovieNotFoundException {
         LOGGER.info("Inside fetchMovieListByYear of MovieController");
         List<Movie> movies = movieService.fetchMoviesListByReleaseYear(year, MINIMUM_RATING, MINIMUM_VOTES);
         return new ResponseEntity<>(movies, HttpStatus.OK);
@@ -64,7 +65,8 @@ public class MovieController {
 //    Get movies between two dates localhost:8080/movies/year?startDate=2021-01-01&endDate=2021-12-31
 
     @GetMapping("/movies/year")
-    public List<Movie> getLaptopsByCreatedDate (@RequestParam int start, @RequestParam int end) {
+    public List<Movie> getMoviesByCreatedDate (@RequestParam int start, @RequestParam int end) throws MovieNotFoundException {
+        LOGGER.info("Inside getMoviesByCreatedDate of MovieController");
         return movieService.findByReleaseYearBetween(start, end);
     }
 
