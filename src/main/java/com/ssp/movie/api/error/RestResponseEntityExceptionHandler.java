@@ -15,7 +15,7 @@ public class RestResponseEntityExceptionHandler
         extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MovieNotFoundException.class)
-    public ResponseEntity<ErrorMessage> departmentNotFoundException(MovieNotFoundException exception,
+    public ResponseEntity<ErrorMessage> MovieNotFoundException(MovieNotFoundException exception,
                                                                     WebRequest request) {
         ErrorMessage message = new ErrorMessage(HttpStatus.NOT_FOUND,
                 exception.getMessage());
