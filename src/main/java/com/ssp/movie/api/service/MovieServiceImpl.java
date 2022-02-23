@@ -4,6 +4,8 @@ import com.ssp.movie.api.entity.Movie;
 import com.ssp.movie.api.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,5 +40,10 @@ public class MovieServiceImpl implements MovieService{
     @Override
     public List<Movie> fetchMoviesListByReleaseYear(int year) {
         return movieRepository.findByReleaseYear(year);
+    }
+
+    @Override
+    public List<Movie> findByYearBetween(int start, int end) {
+        return movieRepository.findByYearBetween(start, end);
     }
 }
