@@ -12,6 +12,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     List<Movie> findByYear(int year);
 
-    @Query("select s from Movies s where s.ratings= ?1")
+    @Query("select s from Movie s where s.rating= ?1")
     List<Movie> getMovieByRating(int rating);
 }
