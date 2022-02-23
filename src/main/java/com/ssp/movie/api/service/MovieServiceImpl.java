@@ -57,7 +57,7 @@ public class MovieServiceImpl implements MovieService{
     public List<Movie> findByReleaseYearBetween(int start, int end) throws MovieNotFoundException {
         List<Movie> movie =movieRepository.findByReleaseYearBetween(start, end);
         if(movie.size()==0) {
-            throw new MovieNotFoundException("Movie not available");
+            throw new MovieNotFoundException("Movie not available.");
         }
         return movie;
     }
