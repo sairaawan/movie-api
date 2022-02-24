@@ -8,7 +8,7 @@ CREATE TABLE People (
   `deathYear` int(4) unsigned DEFAULT NULL,
   `primaryProfession` varchar(80) COLLATE utf8mb4_bin DEFAULT NULL,
   `knownForMovies` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL
-, PRIMARY KEY (`nameId`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+, PRIMARY KEY (`PeopleId`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 LOAD DATA LOCAL INFILE 'names.tsv'
 INTO TABLE People
