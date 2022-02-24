@@ -56,5 +56,24 @@ public class MovieApiControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].movieId").value("Movie003"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].movieName").value("Test Movie 3"));
     }
+    @Test
+    public void shouldReturnMovieRecommendationsForYearBetweenTwoYears() throws Exception {
+
+        List<Movie> movies = new ArrayList<>();
+        movies.add(new Movie("Movie001", "movie", "Test Movie 1",2016, 100, "Action", 8.5, 1000));
+        movies.add(new Movie("Movie002", "movie", "Test Movie 2",2017, 100, "Action", 8.5, 1000));
+        movies.add(new Movie("Movie003", "movie", "Test Movie 3",2018, 100, "Action", 8.5, 1000));
+
+        when(mockMovieServiceImpl.findByReleaseYearBetween(2016, 2018,8,1000)).thenReturn(movies);
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/year?startYear=2016&endYear=2018"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].movieId").value("Movie001"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].releaseYear").value("2016"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].movieId").value("Movie002"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].releaseYear").value("2017"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].movieId").value("Movie003"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].releaseYear").value("2018"));
+    }
 
 }
