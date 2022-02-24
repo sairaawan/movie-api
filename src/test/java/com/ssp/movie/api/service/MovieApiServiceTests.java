@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 @DataJpaTest
 public class MovieApiServiceTests {
     @Mock
-    private MovieRepository mockBookMovieRepository;
+    private MovieRepository mockMovieRepository;
 
     @InjectMocks
     private MovieServiceImpl  movieServiceImplServiceImpl;
@@ -33,9 +33,26 @@ public class MovieApiServiceTests {
         movies.add(new Movie("Movie002", "movie", "Test Movie 2",2018, 100, "Action", 8.5, 1000));
         movies.add(new Movie("Movie003", "movie", "Test Movie 3",2018, 100, "Action", 8.5, 1000));
 
-        when(mockBookMovieRepository.findByReleaseYear(2018, 8,1000))
+        when(mockMovieRepository.findByReleaseYear(2018, 8,1000))
                 .thenReturn(movies);
         List<Movie> actualResult = movieServiceImplServiceImpl.fetchMoviesListByReleaseYear(2018,8,1000);
+
+        assertThat(actualResult).hasSize(3);
+        assertThat(actualResult).isEqualTo(movies);
+
+
+    }
+
+    @Test
+    public void testFindByReleaseYearBetween() throws NoRecommendationsFoundException {
+        List<Movie> movies = new ArrayList<>();
+        movies.add(new Movie("Movie001", "movie", "Test Movie 1",2016, 100, "Action", 8.5, 1000));
+        movies.add(new Movie("Movie002", "movie", "Test Movie 2",2017, 100, "Action", 8.5, 1000));
+        movies.add(new Movie("Movie003", "movie", "Test Movie 3",2018, 100, "Action", 8.5, 1000));
+
+        when(mockMovieRepository.findByReleaseYearBetween(2016, 2018,8,1000))
+                .thenReturn(movies);
+        List<Movie> actualResult = movieServiceImplServiceImpl.findByReleaseYearBetween(2016,2018,8,1000);
 
         assertThat(actualResult).hasSize(3);
         assertThat(actualResult).isEqualTo(movies);
