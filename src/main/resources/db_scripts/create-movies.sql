@@ -15,16 +15,16 @@ CREATE TABLE  Movie (
 )   ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 LOAD DATA LOCAL INFILE 'titles.tsv'
-INTO TABLE movie
+INTO TABLE Movie
 COLUMNS TERMINATED BY '\t'
 IGNORE 1 LINES;
 
-DELETE FROM movie WHERE isAdult = 1 OR (movieType NOT IN ('movie','tvMovie')) OR releaseYear IS NULL OR movieGenre IS NULL OR runningTime is NULL;
+DELETE FROM Movie WHERE isAdult = 1 OR (movieType NOT IN ('movie','tvMovie')) OR releaseYear IS NULL OR movieGenre IS NULL OR runningTime is NULL;
 
-ALTER TABLE movie
+ALTER TABLE Movie
   DROP COLUMN IsAdult,
   DROP COLUMN originalTitle,
   DROP COLUMN endYear;
 
-CREATE INDEX movie_index ON movie(movieId);
-CREATE INDEX release_year_index ON movie(releaseYear);
+CREATE INDEX movie_index ON Movie(movieId);
+CREATE INDEX release_year_index ON Movie(releaseYear);
