@@ -15,6 +15,6 @@ public interface MovieService {
 
    public List<Movie> fetchMoviesListByReleaseYear(int year, double minimumRating, int minimumVotes) throws MovieNotFoundException;
 
-   public List<Movie> findByReleaseYearBetween(int start, int end) throws MovieNotFoundException;
+   public List<Movie> findByReleaseYearBetween(int startYear, int endYear, double minimumRating, int minimumVotes) throws MovieNotFoundException;
 
 }
