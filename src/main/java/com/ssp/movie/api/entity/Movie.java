@@ -16,7 +16,6 @@ import java.util.Date;
 @Builder
 public class Movie {
     @Id
- //   @GeneratedValue(strategy = GenerationType.AUTO)
     private String movieId;
     private String movieType;
     private String movieName;

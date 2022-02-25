@@ -1,7 +1,7 @@
 package com.ssp.movie.api.controller;
 
 import com.ssp.movie.api.entity.Movie;
-import com.ssp.movie.api.error.MovieNotFoundException;
+import com.ssp.movie.api.error.NoRecommendationsFoundException;
 import com.ssp.movie.api.service.MovieService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
+
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RestController
 public class MovieController {
@@ -22,50 +21,25 @@ public class MovieController {
     private final double MINIMUM_RATING = 8.0;
     private final int MINIMUM_VOTES = 1000;
 
-
-    private final Logger LOGGER =
-            LoggerFactory.getLogger(MovieController.class);
-
-    @PostMapping("/movies")
-    public Movie saveDepartment(@RequestBody Movie movie) {
-        LOGGER.info("Inside saveMovie of MovieController");
-        return movieService.saveMovie(movie);
-    }
+    private final Logger LOGGER = LoggerFactory.getLogger(MovieController.class);
 
     @GetMapping("/")
     public String Welcome() {
         return "Welcome to movies";
     }
 
-//   Find 3 movies per page, given page number, ordered by rating
 
-    @GetMapping("/movies/page/{page}")
-    public List<Movie> fetchMoviesListByRatingSorted(@PathVariable("page") int page) throws MovieNotFoundException {
-        LOGGER.info("Inside fetchMoviesListByRatingSorted of MovieController Per Page");
-        return movieService.fetchMoviesListByRatingSorted(page);
-    }
-// Find all movies given a rating number
-
-    @GetMapping("/movies/rating/{rating}")
-    public List<Movie> fetchMoviesListByRatings(@PathVariable("rating") int rating) throws MovieNotFoundException {
-        LOGGER.info("Inside fetchMoviesListByRatings of MovieController");
-        return movieService.fetchMoviesListByAverageRating(rating);
-
-    }
-
-//    Find by year, returning 3 movie records based on rating
-
+    //  Get recommendations for a specified year, /movies/year/2019
     @GetMapping("/movies/year/{year}")
-    public ResponseEntity fetchMoviesListByYear(@PathVariable("year") int year) throws MovieNotFoundException {
+    public ResponseEntity fetchMoviesListByYear(@PathVariable("year") int year) throws NoRecommendationsFoundException {
         LOGGER.info("Inside fetchMovieListByYear of MovieController");
         List<Movie> movies = movieService.fetchMoviesListByReleaseYear(year, MINIMUM_RATING, MINIMUM_VOTES);
         return new ResponseEntity<>(movies, HttpStatus.OK);
     }
 
-//    Get movies between two dates localhost:8080/movies/year?startDate=2021-01-01&endDate=2021-12-31
-
+    //  Get recommendations for a specified year range, /movies/year?startYear=2018&endYear=2020
     @GetMapping("/movies/year")
-    public List<Movie> getMoviesByCreatedDate (@RequestParam int startYear, @RequestParam int endYear) throws MovieNotFoundException {
+    public List<Movie> getMoviesByCreatedDate(@RequestParam int startYear, @RequestParam int endYear) throws NoRecommendationsFoundException {
         LOGGER.info("Inside getMoviesByCreatedDate of MovieController");
         return movieService.findByReleaseYearBetween(startYear, endYear, MINIMUM_RATING, MINIMUM_VOTES);
     }

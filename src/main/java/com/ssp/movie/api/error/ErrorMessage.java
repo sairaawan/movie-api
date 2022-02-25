@@ -1,4 +1,4 @@
-package com.ssp.movie.api.entity;
+package com.ssp.movie.api.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

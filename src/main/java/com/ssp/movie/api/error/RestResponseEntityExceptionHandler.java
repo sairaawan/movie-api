@@ -1,6 +1,5 @@
 package com.ssp.movie.api.error;
 
-import com.ssp.movie.api.entity.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,13 +13,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestResponseEntityExceptionHandler
         extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(MovieNotFoundException.class)
-    public ResponseEntity<ErrorMessage> MovieNotFoundException(MovieNotFoundException exception,
-                                                                    WebRequest request) {
-        ErrorMessage message = new ErrorMessage(HttpStatus.NOT_FOUND,
-                exception.getMessage());
+    @ExceptionHandler(NoRecommendationsFoundException.class)
+    public ResponseEntity<ErrorMessage> MovieNotFoundException(NoRecommendationsFoundException exception,
+                                                               WebRequest request) {
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(message);
+        ErrorMessage message = new ErrorMessage(HttpStatus.OK, exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 }
