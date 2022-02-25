@@ -20,6 +20,10 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
                     "AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")
     List<Movie> findByReleaseYear(@Param("year") int year, double minimumRating, int minimumVotes);
 
-    List<Movie> findByReleaseYearBetween(int start, int end);
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM Movie s WHERE s.releaseYear >= :startYear AND s.releaseYear <= :endYear" +
+                    " AND averageRating >= :minimumRating" +
+                    " AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")
+    List<Movie> findByReleaseYearBetween(int startYear, int endYear, double minimumRating, int minimumVotes);
 
 }

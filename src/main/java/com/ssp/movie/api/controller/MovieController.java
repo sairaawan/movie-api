@@ -65,9 +65,9 @@ public class MovieController {
 //    Get movies between two dates localhost:8080/movies/year?startDate=2021-01-01&endDate=2021-12-31
 
     @GetMapping("/movies/year")
-    public List<Movie> getMoviesByCreatedDate (@RequestParam int start, @RequestParam int end) throws MovieNotFoundException {
+    public List<Movie> getMoviesByCreatedDate (@RequestParam int startYear, @RequestParam int endYear) throws MovieNotFoundException {
         LOGGER.info("Inside getMoviesByCreatedDate of MovieController");
-        return movieService.findByReleaseYearBetween(start, end);
+        return movieService.findByReleaseYearBetween(startYear, endYear, MINIMUM_RATING, MINIMUM_VOTES);
     }
 
 }

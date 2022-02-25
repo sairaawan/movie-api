@@ -6,7 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @DataJpaTest
 public class MovieApiRepositoryTests {
@@ -36,27 +40,35 @@ public class MovieApiRepositoryTests {
 
     @Test
     public void shouldReturnLimitOf3MoviesForSpecifiedYearWithNoZeroValuesForRatingsAndVotes() {
-        Iterable<Movie> movies = movieRepository.findByReleaseYear(2018,0,0);
+        List<Movie> movies = movieRepository.findByReleaseYear(2018,0,0);
         assertThat(movies).hasSize(3);
     }
 
     @Test
     public void shouldReturn2MoviesForSpecifiedYearWithValueSetForRatings() {
-        Iterable<Movie> movies = movieRepository.findByReleaseYear(2018,8.0,0);
+        List<Movie> movies = movieRepository.findByReleaseYear(2018,8.0,0);
         assertThat(movies).hasSize(2);
     }
 
     @Test
     public void shouldReturn1MovieForSpecifiedYearWithValueSetForRatingsAndVotes() {
-        Iterable<Movie> movies = movieRepository.findByReleaseYear(2018,8.0,1000);
+        List<Movie> movies = movieRepository.findByReleaseYear(2018,8.0,1000);
         assertThat(movies).hasSize(1);
     }
 
     @Test
     public void shouldReturn0MoviesForYearWithNoMovies() {
-        Iterable<Movie> movies = movieRepository.findByReleaseYear(3019,0.0,0);
+        List<Movie> movies = movieRepository.findByReleaseYear(3019,0.0,0);
         assertThat(movies).hasSize(0);
     }
 
+    @Test
+    public void shouldReturn3MoviesFromSameYearWhenStartAndEndYearAreTheSame() {
+        int testYear = 2018;
+        int resultsExpected = 3;
+        List<Movie> movies = movieRepository.findByReleaseYearBetween(testYear,testYear,0, 0);
+        assertThat(movies).hasSize(3);
+        assertTrue(movies.stream().allMatch(movie -> movie.getReleaseYear() == testYear));
+    }
 
 }
