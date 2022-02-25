@@ -23,7 +23,7 @@ public class MovieServiceImpl implements MovieService{
         List<Movie> movie =
                 movieRepository.findAll(sortByRating).getContent();
         if(movie.isEmpty()) {
-            throw new NoRecommendationsFoundException("Movie not available.Enter correct page no");
+            throw new NoRecommendationsFoundException("No recommendations found.");
         }
         return  movie;
     }
@@ -32,7 +32,7 @@ public class MovieServiceImpl implements MovieService{
     public List<Movie> fetchMoviesListByAverageRating(int rating) throws NoRecommendationsFoundException {
        List<Movie> movie =movieRepository.getMovieByAverageRating(rating);
         if(movie.isEmpty()) {
-            throw new NoRecommendationsFoundException("Movie not available. Enter correct rating");
+            throw new NoRecommendationsFoundException("No recommendations found.");
         }
         return movie;
     }
@@ -41,7 +41,7 @@ public class MovieServiceImpl implements MovieService{
     public List<Movie> fetchMoviesListByReleaseYear(int year, double minimumRating, int minimumVotes) throws NoRecommendationsFoundException {
         List<Movie> movie = movieRepository.findByReleaseYear(year, minimumRating, minimumVotes);
         if(movie.isEmpty()) {
-            throw new NoRecommendationsFoundException("Movie not available. Enter correct year");
+            throw new NoRecommendationsFoundException("No recommendations found.");
         }
         return movie;
     }
@@ -50,7 +50,7 @@ public class MovieServiceImpl implements MovieService{
     public List<Movie> findByReleaseYearBetween(int startYear, int endYear, double minimumRating, int minimumVotes) throws NoRecommendationsFoundException {
         List<Movie> movie=movieRepository.findByReleaseYearBetween(startYear, endYear, minimumRating, minimumVotes);
         if(movie.isEmpty()) {
-            throw new NoRecommendationsFoundException("Movie not available.");
+            throw new NoRecommendationsFoundException("No recommendations found.");
         }
         return movie;
     }
