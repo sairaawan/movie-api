@@ -41,7 +41,7 @@ public class MovieController {
     @GetMapping("/movies/year")
     public List<Movie> getMoviesByCreatedDate(@RequestParam int startYear, @RequestParam int endYear) throws NoRecommendationsFoundException {
         LOGGER.info("Inside getMoviesByCreatedDate of MovieController");
-        return movieService.findByReleaseYearBetween(startYear, endYear, MINIMUM_RATING, MINIMUM_VOTES);
+        return movieService.fetchByReleaseYearBetween(startYear, endYear, MINIMUM_RATING, MINIMUM_VOTES);
     }
 
 }

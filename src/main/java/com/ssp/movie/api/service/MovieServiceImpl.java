@@ -47,7 +47,7 @@ public class MovieServiceImpl implements MovieService{
     }
 
     @Override
-    public List<Movie> findByReleaseYearBetween(int startYear, int endYear, double minimumRating, int minimumVotes) throws NoRecommendationsFoundException {
+    public List<Movie> fetchByReleaseYearBetween(int startYear, int endYear, double minimumRating, int minimumVotes) throws NoRecommendationsFoundException {
         List<Movie> movie=movieRepository.findByReleaseYearBetween(startYear, endYear, minimumRating, minimumVotes);
         if(movie.isEmpty()) {
             throw new NoRecommendationsFoundException("No recommendations found.");

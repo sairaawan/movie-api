@@ -65,7 +65,7 @@ public class MovieApiControllerTests {
         movies.add(new Movie("Movie002", "movie", "Test Movie 2",2017, 100, "Action", 8.5, 1000));
         movies.add(new Movie("Movie003", "movie", "Test Movie 3",2018, 100, "Action", 8.5, 1000));
 
-        when(mockMovieServiceImpl.findByReleaseYearBetween(2016, 2018,8,1000)).thenReturn(movies);
+        when(mockMovieServiceImpl.fetchByReleaseYearBetween(2016, 2018,8,1000)).thenReturn(movies);
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "2016").param("endYear", "2018"))
                 .andDo(print())
