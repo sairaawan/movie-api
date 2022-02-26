@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -66,14 +67,15 @@ public class MovieApiControllerTests {
 
         when(mockMovieServiceImpl.findByReleaseYearBetween(2016, 2018,8,1000)).thenReturn(movies);
 
-        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/year?startYear=2016&endYear=2018"))
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "2016").param("endYear", "2018"))
+                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].movieId").value("Movie001"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].releaseYear").value("2016"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].releaseYear").value(2016))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].movieId").value("Movie002"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].releaseYear").value("2017"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].releaseYear").value(2017))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].movieId").value("Movie003"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].releaseYear").value("2018"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].releaseYear").value(2018));
     }
 
 }
