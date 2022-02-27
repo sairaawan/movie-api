@@ -28,7 +28,6 @@ public class MovieController {
         return "Welcome to movies";
     }
 
-
     //  Get recommendations for a specified year, /movies/year/2019
     @GetMapping("/movies/year/{year}")
     public ResponseEntity fetchMoviesListByYear(@PathVariable("year") int year) throws NoRecommendationsFoundException {
@@ -39,9 +38,18 @@ public class MovieController {
 
     //  Get recommendations for a specified year range, /movies/year?startYear=2018&endYear=2020
     @GetMapping("/movies/year")
-    public List<Movie> getMoviesByCreatedDate(@RequestParam int startYear, @RequestParam int endYear) throws NoRecommendationsFoundException {
+    public ResponseEntity getMoviesByCreatedDate(@RequestParam int startYear, @RequestParam int endYear) throws NoRecommendationsFoundException {
         LOGGER.info("Inside getMoviesByCreatedDate of MovieController");
-        return movieService.fetchByReleaseYearBetween(startYear, endYear, MINIMUM_RATING, MINIMUM_VOTES);
+        List<Movie> movies = movieService.fetchByReleaseYearBetween(startYear, endYear, MINIMUM_RATING, MINIMUM_VOTES);
+        return new ResponseEntity<>(movies, HttpStatus.OK);
+    }
+
+    //  Get recommendations for a specified genre
+    @GetMapping("/movies/genre/{genre}")
+    public ResponseEntity getMoviesByGenre(@PathVariable("genre") String genre) throws NoRecommendationsFoundException {
+        LOGGER.info("Inside getMoviesByGenre of MovieController");
+        List<Movie> movies =  movieService.fetchByGenre(genre, MINIMUM_RATING, MINIMUM_VOTES);
+        return new ResponseEntity<>(movies, HttpStatus.OK);
     }
 
 }

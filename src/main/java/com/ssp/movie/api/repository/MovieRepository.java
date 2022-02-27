@@ -26,4 +26,10 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
                     " AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")
     List<Movie> findByReleaseYearBetween(int startYear, int endYear, double minimumRating, int minimumVotes);
 
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM Movie s WHERE s.movieGenre LIKE CONCAT('%', :movieGenre, '%')" +
+                    " AND averageRating >= :minimumRating" +
+                    " AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")
+    List<Movie> findByGenre(String movieGenre, double minimumRating, int minimumVotes);
+
 }
