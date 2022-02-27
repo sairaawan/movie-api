@@ -22,7 +22,7 @@ Spring Web
 
  Setup and Installation
 1.	Download or clone the repository from GitHub
-git clone https://github.com/
+git clone https://github.com/sairaawan/movie-api.git
 2.	Install required programs
 In order to follow the user needs to have MySQL and Postman. Below are the short terminal lines for easy installation
 sudo apt update
