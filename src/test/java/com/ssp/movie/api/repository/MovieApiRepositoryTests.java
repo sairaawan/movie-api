@@ -94,4 +94,13 @@ public class MovieApiRepositoryTests {
         assertThat(movies).hasSize(resultsExpected);
     }
 
+    @Test
+    public void shouldReturnMoviesWithTheSpecifiedGenre() {
+        String genre = "Action";
+        int resultsExpected = 2;
+        List<Movie> movies = movieRepository.findByGenre(genre,0, 0);
+        assertThat(movies).hasSize(resultsExpected);
+        assertTrue(movies.stream().allMatch(movie -> movie.getMovieGenre().contains(genre)));
+    }
+
 }

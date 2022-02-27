@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -33,18 +33,20 @@ public class MovieApiControllerTests {
     @Autowired
     private MockMvc mockMvcController;
 
+    private List<Movie> movies;
+
     @BeforeEach
     public void setup(){
         mockMvcController = MockMvcBuilders.standaloneSetup(movieController).build();
+
+        movies = new ArrayList<>();
+        movies.add(new Movie("Movie001", "movie", "Test Movie 1",2018, 100, "Action", 8.5, 1000));
+        movies.add(new Movie("Movie002", "movie", "Test Movie 2",2018, 100, "Action", 8.5, 1000));
+        movies.add(new Movie("Movie003", "movie", "Test Movie 3",2018, 100, "Action", 8.5, 1000));
     }
 
     @Test
     public void shouldReturnMovieRecommendationsForTheYear() throws Exception {
-
-        List<Movie> movies = new ArrayList<>();
-        movies.add(new Movie("Movie001", "movie", "Test Movie 1",2018, 100, "Action", 8.5, 1000));
-        movies.add(new Movie("Movie002", "movie", "Test Movie 2",2018, 100, "Action", 8.5, 1000));
-        movies.add(new Movie("Movie003", "movie", "Test Movie 3",2018, 100, "Action", 8.5, 1000));
 
         when(mockMovieServiceImpl.fetchMoviesListByReleaseYear(2018, 8,1000)).thenReturn(movies);
 
@@ -57,25 +59,37 @@ public class MovieApiControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].movieId").value("Movie003"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].movieName").value("Test Movie 3"));
     }
+
     @Test
     public void shouldReturnMovieRecommendationsForYearBetweenTwoYears() throws Exception {
-
-        List<Movie> movies = new ArrayList<>();
-        movies.add(new Movie("Movie001", "movie", "Test Movie 1",2016, 100, "Action", 8.5, 1000));
-        movies.add(new Movie("Movie002", "movie", "Test Movie 2",2017, 100, "Action", 8.5, 1000));
-        movies.add(new Movie("Movie003", "movie", "Test Movie 3",2018, 100, "Action", 8.5, 1000));
 
         when(mockMovieServiceImpl.fetchByReleaseYearBetween(2016, 2018,8,1000)).thenReturn(movies);
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "2016").param("endYear", "2018"))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].movieId").value("Movie001"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].releaseYear").value(2016))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].releaseYear").value(2018))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].movieId").value("Movie002"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].releaseYear").value(2017))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].releaseYear").value(2018))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].movieId").value("Movie003"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].releaseYear").value(2018));
     }
+
+    @Test
+    public void shouldReturnMovieRecommendationsByGenre() throws Exception {
+
+        String genre = "Action";
+        when(mockMovieServiceImpl.fetchByGenre(genre,8,1000)).thenReturn(movies);
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/genre/Action"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].movieId").value("Movie001"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].movieGenre").value("Action"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].movieId").value("Movie002"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].movieGenre").value("Action"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].movieId").value("Movie003"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].movieGenre").value("Action"));
+    }
+
 
 }

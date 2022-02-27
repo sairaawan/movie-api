@@ -54,4 +54,14 @@ public class MovieServiceImpl implements MovieService{
         }
         return movie;
     }
+
+    @Override
+    public List<Movie> fetchByGenre(String genre, double minimumRating, int minimumVotes) throws NoRecommendationsFoundException {
+        List<Movie> movie=movieRepository.findByGenre(genre, minimumRating, minimumVotes);
+        if(movie.isEmpty()) {
+            throw new NoRecommendationsFoundException("No recommendations found.");
+        }
+        return movie;
+    }
+
 }
