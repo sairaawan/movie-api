@@ -51,5 +51,11 @@ public class MovieController {
         List<Movie> movies =  movieService.fetchByGenre(genre, MINIMUM_RATING, MINIMUM_VOTES);
         return new ResponseEntity<>(movies, HttpStatus.OK);
     }
+    @GetMapping("/movies/name/{name}")
+    public ResponseEntity getMoviesByName(@PathVariable("name") String name) throws NoRecommendationsFoundException {
+        LOGGER.info("Inside getMoviesByName of MovieController");
+        List<Movie> movies =  movieService.fetchByName(name, MINIMUM_RATING, MINIMUM_VOTES);
+        return new ResponseEntity<>(movies, HttpStatus.OK);
+    }
 
 }

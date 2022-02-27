@@ -32,4 +32,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
                     " AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")
     List<Movie> findByGenre(String movieGenre, double minimumRating, int minimumVotes);
 
+    List<Movie> findByMovieNameIgnoreCase(String name);
+
+
 }

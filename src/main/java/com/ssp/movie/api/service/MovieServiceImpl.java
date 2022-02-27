@@ -64,4 +64,9 @@ public class MovieServiceImpl implements MovieService{
         return movie;
     }
 
+    @Override
+    public List<Movie> fetchByName(String name, double minimum_rating, int minimum_votes) {
+        return movieRepository.findByMovieNameIgnoreCase(name);
+    }
+
 }
