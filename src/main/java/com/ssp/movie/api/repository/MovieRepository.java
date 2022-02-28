@@ -32,4 +32,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
                     " AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")
     List<Movie> findByGenre(String movieGenre, double minimumRating, int minimumVotes);
 
+
+    @Query(nativeQuery = true, value = "SELECT * FROM Movie s WHERE s.movieId IN :movieIds" +
+                    " ORDER BY RAND() DESC LIMIT 3")
+    List<Movie> findByMovieId(List<String> movieIds);
+
 }

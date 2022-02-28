@@ -29,4 +29,8 @@ public class MovieServiceImpl implements MovieService{
         return movieRepository.findByGenre(genre, minimumRating, minimumVotes);
     }
 
+    @Override
+    public List<Movie> fetchByMovieId(List<String> movieIds) throws NoRecommendationsException {
+        return movieRepository.findByMovieId(movieIds);
+    }
 }

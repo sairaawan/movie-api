@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,12 +18,12 @@ import static org.mockito.Mockito.when;
 
 
 @DataJpaTest
-public class MovieApiServiceTests {
+public class MovieServiceTests {
     @Mock
     private MovieRepository mockMovieRepository;
 
     @InjectMocks
-    private MovieServiceImpl movieServiceImplServiceImpl;
+    private MovieServiceImpl movieServiceImpl;
 
     private List<Movie> movies;
 
@@ -40,7 +41,7 @@ public class MovieApiServiceTests {
 
         when(mockMovieRepository.findByReleaseYear(2018, 8, 1000))
                 .thenReturn(movies);
-        List<Movie> actualResult = movieServiceImplServiceImpl.fetchMoviesListByReleaseYear(2018, 8, 1000);
+        List<Movie> actualResult = movieServiceImpl.fetchMoviesListByReleaseYear(2018, 8, 1000);
 
         assertThat(actualResult).hasSize(3);
         assertThat(actualResult).isEqualTo(movies);
@@ -51,7 +52,7 @@ public class MovieApiServiceTests {
 
         when(mockMovieRepository.findByReleaseYearBetween(2018, 2019,8, 1000))
                 .thenReturn(movies);
-        List<Movie> actualResult = movieServiceImplServiceImpl.fetchByReleaseYearBetween(2018, 2019,8, 1000);
+        List<Movie> actualResult = movieServiceImpl.fetchByReleaseYearBetween(2018, 2019,8, 1000);
 
         assertThat(actualResult).hasSize(3);
         assertThat(actualResult).isEqualTo(movies);
@@ -64,7 +65,18 @@ public class MovieApiServiceTests {
         String genre = "Action";
         when(mockMovieRepository.findByGenre(genre, 8, 1000))
                 .thenReturn(movies);
-        List<Movie> actualResult = movieServiceImplServiceImpl.fetchByGenre(genre, 8, 1000);
+        List<Movie> actualResult = movieServiceImpl.fetchByGenre(genre, 8, 1000);
+
+        assertThat(actualResult).hasSize(3);
+        assertThat(actualResult).isEqualTo(movies);
+    }
+
+    @Test
+    public void shouldBeAbleToFetchMoviesById() throws NoRecommendationsException {
+
+        List<String> movieIds = Arrays.asList("Movie001","Movie002","Movie003");
+        when(mockMovieRepository.findByMovieId(movieIds)).thenReturn(movies);
+        List<Movie> actualResult = movieServiceImpl.fetchByMovieId(movieIds);
 
         assertThat(actualResult).hasSize(3);
         assertThat(actualResult).isEqualTo(movies);

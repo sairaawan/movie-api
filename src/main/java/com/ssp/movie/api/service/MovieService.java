@@ -12,4 +12,6 @@ public interface MovieService {
    List<Movie> fetchByReleaseYearBetween(int startYear, int endYear, double minimumRating, int minimumVotes) throws NoRecommendationsException;
 
    List<Movie> fetchByGenre(String genre, double minimumRating, int minimumVotes) throws NoRecommendationsException;
+
+   List<Movie> fetchByMovieId(List<String> movieIds) throws NoRecommendationsException;
 }
