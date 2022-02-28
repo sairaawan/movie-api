@@ -1,9 +1,11 @@
 package com.ssp.movie.api.controller;
 
 import com.ssp.movie.api.entity.Movie;
+import com.ssp.movie.api.entity.Person;
 import com.ssp.movie.api.error.NoRecommendationsException;
 import com.ssp.movie.api.error.RestResponseEntityExceptionHandler;
 import com.ssp.movie.api.service.MovieServiceImpl;
+import com.ssp.movie.api.service.PersonServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,10 +27,13 @@ import static org.mockito.Mockito.when;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-public class MovieApiControllerTests {
+public class MovieControllerTests {
 
     @Mock
     private MovieServiceImpl mockMovieServiceImpl;
+
+    @Mock
+    private PersonServiceImpl mockPersonServiceImpl;
 
     @InjectMocks
     private MovieController movieController;
@@ -36,6 +42,9 @@ public class MovieApiControllerTests {
     private MockMvc mockMvcController;
 
     private List<Movie> movies;
+    private List<Person> people;
+    private List<String> movieIds;
+    private List<Movie> emptyMovieList;
 
     @BeforeEach
     public void setup(){
@@ -45,6 +54,12 @@ public class MovieApiControllerTests {
         movies.add(new Movie("Movie001", "movie", "Test Movie 1",2018, 100, "Action", 8.5, 1000));
         movies.add(new Movie("Movie002", "movie", "Test Movie 2",2018, 100, "Action", 8.5, 1000));
         movies.add(new Movie("Movie003", "movie", "Test Movie 3",2018, 100, "Action", 8.5, 1000));
+
+        people = new ArrayList<>();
+        people.add(new Person("Person001", "Tom Hanks", 1956, null, "Actor", "Movie001,Movie002,Movie003"));
+
+        movieIds = Arrays.asList("Movie001","Movie002","Movie003");
+        emptyMovieList = new ArrayList<>();
     }
 
     @Test
@@ -94,9 +109,23 @@ public class MovieApiControllerTests {
     }
 
     @Test
-    public void shouldHandleNoMoviesFound() throws Exception {
+    public void shouldHandleNoMoviesFoundForAYear() throws Exception {
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/0"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
+    }
+
+    @Test
+    public void shouldHandleNoMoviesFoundForAYearRange() throws Exception {
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "0").param("endYear", "1"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
+    }
+
+    @Test
+    public void shouldHandleNoMoviesFoundForAGenre() throws Exception {
+        String genre = "Thriller";
+        when(mockMovieServiceImpl.fetchByGenre(genre,8,1000)).thenReturn(emptyMovieList);
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/genre/Thriller"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
     }
 
@@ -115,4 +144,40 @@ public class MovieApiControllerTests {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
 
     }
+
+    @Test
+    public void shouldReturnMovieRecommendationsByPersonName() throws Exception {
+
+        when(mockPersonServiceImpl.fetchByPrimaryName("Tom Hanks")).thenReturn(people);
+        when(mockMovieServiceImpl.fetchByMovieId(movieIds)).thenReturn(movies);
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/person/Tom Hanks"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieId").value("Movie001"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieGenre").value("Action"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieId").value("Movie002"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieGenre").value("Action"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieId").value("Movie003"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieGenre").value("Action"));
+    }
+
+    @Test
+    public void shouldHandleInvalidPerson() throws Exception {
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/person/uknown"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
+
+    }
+
+    @Test
+    public void shouldHandleValidPersonButNoMovies() throws Exception {
+
+        when(mockPersonServiceImpl.fetchByPrimaryName("Tom Hanks")).thenReturn(people);
+        when(mockMovieServiceImpl.fetchByMovieId(movieIds)).thenReturn(emptyMovieList);
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/person/Tom Hanks"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
+
+    }
+
+
 }
