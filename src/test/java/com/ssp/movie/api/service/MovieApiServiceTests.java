@@ -1,7 +1,7 @@
 package com.ssp.movie.api.service;
 
 import com.ssp.movie.api.entity.Movie;
-import com.ssp.movie.api.error.NoRecommendationsFoundException;
+import com.ssp.movie.api.error.NoRecommendationsException;
 import com.ssp.movie.api.repository.MovieRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 
@@ -37,7 +36,7 @@ public class MovieApiServiceTests {
     }
 
     @Test
-    public void shouldBeAbleToFetchMoviesListByReleaseYear() throws NoRecommendationsFoundException {
+    public void shouldBeAbleToFetchMoviesListByReleaseYear() throws NoRecommendationsException {
 
         when(mockMovieRepository.findByReleaseYear(2018, 8, 1000))
                 .thenReturn(movies);
@@ -48,7 +47,7 @@ public class MovieApiServiceTests {
     }
 
     @Test
-    public void shouldBeAbleToFetchReleaseYearBetween() throws NoRecommendationsFoundException {
+    public void shouldBeAbleToFetchReleaseYearBetween() throws NoRecommendationsException {
 
         when(mockMovieRepository.findByReleaseYearBetween(2018, 2019,8, 1000))
                 .thenReturn(movies);
@@ -60,27 +59,7 @@ public class MovieApiServiceTests {
 
 
     @Test
-    public void shouldThrowExceptionWhenNoRecommendationsAreAvailableByYear() throws NoRecommendationsFoundException {
-        List<Movie> noMovies = new ArrayList<>();
-
-        when(mockMovieRepository.findByReleaseYear(2018, 8, 1000))
-                .thenReturn(noMovies);
-        assertThrows(NoRecommendationsFoundException.class,
-                () -> movieServiceImplServiceImpl.fetchMoviesListByReleaseYear(2018, 8, 1000));
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenNoRecommendationsAreAvailableByYearRange() throws NoRecommendationsFoundException {
-        List<Movie> noMovies = new ArrayList<>();
-
-        when(mockMovieRepository.findByReleaseYearBetween(2018, 2019,8, 1000))
-                .thenReturn(noMovies);
-        assertThrows(NoRecommendationsFoundException.class,
-                () -> movieServiceImplServiceImpl.fetchByReleaseYearBetween(2018, 2019,8, 1000));
-    }
-
-    @Test
-    public void shouldBeAbleToFetchMoviesByGenre() throws NoRecommendationsFoundException {
+    public void shouldBeAbleToFetchMoviesByGenre() throws NoRecommendationsException {
 
         String genre = "Action";
         when(mockMovieRepository.findByGenre(genre, 8, 1000))
@@ -89,16 +68,6 @@ public class MovieApiServiceTests {
 
         assertThat(actualResult).hasSize(3);
         assertThat(actualResult).isEqualTo(movies);
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenNoRecommendationsAreAvailableByGenre() throws NoRecommendationsFoundException {
-        List<Movie> noMovies = new ArrayList<>();
-
-        when(mockMovieRepository.findByGenre("NoGenre",0, 0))
-                .thenReturn(noMovies);
-        assertThrows(NoRecommendationsFoundException.class,
-                () -> movieServiceImplServiceImpl.fetchByGenre("NoGenre", 0,0));
     }
 
 }

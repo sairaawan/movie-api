@@ -1,7 +1,9 @@
 package com.ssp.movie.api.controller;
 
+import com.ssp.movie.api.entity.ApiResponse;
+import com.ssp.movie.api.entity.GenreEnum;
 import com.ssp.movie.api.entity.Movie;
-import com.ssp.movie.api.error.NoRecommendationsFoundException;
+import com.ssp.movie.api.error.NoRecommendationsException;
 import com.ssp.movie.api.service.MovieService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,26 +32,48 @@ public class MovieController {
 
     //  Get recommendations for a specified year, /movies/year/2019
     @GetMapping("/movies/year/{year}")
-    public ResponseEntity fetchMoviesListByYear(@PathVariable("year") int year) throws NoRecommendationsFoundException {
+    public ResponseEntity<ApiResponse> fetchMoviesListByYear(@PathVariable("year") int year) throws NoRecommendationsException {
         LOGGER.info("Inside fetchMovieListByYear of MovieController");
         List<Movie> movies = movieService.fetchMoviesListByReleaseYear(year, MINIMUM_RATING, MINIMUM_VOTES);
-        return new ResponseEntity<>(movies, HttpStatus.OK);
+
+        if (movies.isEmpty()) {
+            throw new NoRecommendationsException("No recommendations found");
+        }
+        ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     //  Get recommendations for a specified year range, /movies/year?startYear=2018&endYear=2020
     @GetMapping("/movies/year")
-    public ResponseEntity getMoviesByCreatedDate(@RequestParam int startYear, @RequestParam int endYear) throws NoRecommendationsFoundException {
+    public ResponseEntity getMoviesByCreatedDate(@RequestParam int startYear, @RequestParam int endYear) throws NoRecommendationsException {
         LOGGER.info("Inside getMoviesByCreatedDate of MovieController");
         List<Movie> movies = movieService.fetchByReleaseYearBetween(startYear, endYear, MINIMUM_RATING, MINIMUM_VOTES);
-        return new ResponseEntity<>(movies, HttpStatus.OK);
+
+        if (movies.isEmpty()) {
+            throw new NoRecommendationsException("No recommendations found");
+        }
+
+        ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     //  Get recommendations for a specified genre
     @GetMapping("/movies/genre/{genre}")
-    public ResponseEntity getMoviesByGenre(@PathVariable("genre") String genre) throws NoRecommendationsFoundException {
+    public ResponseEntity getMoviesByGenre(@PathVariable("genre") String genre) throws NoRecommendationsException {
         LOGGER.info("Inside getMoviesByGenre of MovieController");
-        List<Movie> movies =  movieService.fetchByGenre(genre, MINIMUM_RATING, MINIMUM_VOTES);
-        return new ResponseEntity<>(movies, HttpStatus.OK);
+
+        if (!GenreEnum.isValidGenre(genre)) {
+            throw new IllegalArgumentException("Invalid Genre");
+        }
+
+        List<Movie> movies =  movieService.fetchByGenre(GenreEnum.valueOf(genre.toUpperCase()).getName(), MINIMUM_RATING, MINIMUM_VOTES);
+
+        if (movies.isEmpty()) {
+            throw new NoRecommendationsException("No recommendations found");
+        }
+
+        ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
 }
