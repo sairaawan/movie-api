@@ -17,4 +17,9 @@ public class GenreEnumTests {
         assertFalse(GenreEnum.isValidGenre("NoGenre"));
     }
 
+    @Test
+    public void shouldBeAbleToGetName() {
+        assertEquals("Action", GenreEnum.valueOf("ACTION").getName());
+    }
+
 }
