@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -24,4 +25,4 @@ public class Movie {
     private String movieGenre;
     private double averageRating;
     private int numberOfVotes;
-}
+
