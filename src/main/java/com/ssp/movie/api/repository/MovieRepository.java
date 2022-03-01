@@ -31,12 +31,13 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
 
     @Query(nativeQuery = true, value = "SELECT * FROM Movie s WHERE s.movieId IN :movieIds" +
-                    " ORDER BY RAND() DESC LIMIT 3")
+            " ORDER BY RAND() DESC LIMIT 3")
     List<Movie> findByMovieId(List<String> movieIds);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM Movie s WHERE s.movieName LIKE CONCAT('%', :movieName, '%')"+
-            "ORDER BY RAND() DESC LIMIT 3" )
-    List<Movie> findByMovieNameContaining(String movieName);
+    @Query(nativeQuery = true, value = "SELECT * FROM Movie s WHERE s.movieName LIKE CONCAT('%', :movieName, '%')" +
+                    " AND averageRating >= :minimumRating" +
+                    " AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")
+    List<Movie> findByMovieNameContaining(String movieName, double minimumRating, int minimumVotes);
 
     List<Movie> findByMovieNameIgnoreCase(String movieName);
 
