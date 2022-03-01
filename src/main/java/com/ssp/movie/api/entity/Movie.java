@@ -25,4 +25,5 @@ public class Movie {
     private String movieGenre;
     private double averageRating;
     private int numberOfVotes;
+}
 
