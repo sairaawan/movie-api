@@ -2,13 +2,14 @@ USE imdb;
 
 DROP TABLE IF EXISTS Person;
 CREATE TABLE Person (
-  `PersonId` varchar(20) COLLATE utf8mb4_bin NOT NULL,
-  `primaryName` varchar(80) COLLATE utf8mb4_bin NOT NULL,
+  `PersonId` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `primaryName` varchar(80) COLLATE utf8mb4_general_ci NOT NULL,
   `birthYear` int(4) unsigned DEFAULT NULL,
   `deathYear` int(4) unsigned DEFAULT NULL,
-  `primaryProfession` varchar(80) COLLATE utf8mb4_bin DEFAULT NULL,
-  `knownForMovies` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL
-, PRIMARY KEY (`PersonId`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  `primaryProfession` varchar(80) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `knownForMovies` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
+, PRIMARY KEY (`PersonId`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 LOAD DATA LOCAL INFILE 'names.tsv'
 INTO TABLE Person
