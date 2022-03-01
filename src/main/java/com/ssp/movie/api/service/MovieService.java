@@ -16,5 +16,4 @@ public interface MovieService {
 
     List<Movie> fetchMovieByName(String movieName, double minimumRating, int minimumVotes);
 
-    List<Movie> fetchMovieByNameExact(String movieName);
 }

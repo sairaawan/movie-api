@@ -106,28 +106,13 @@ public class MovieController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @GetMapping("/movies/name/contains/{name}")
-    public ResponseEntity<ApiResponse> fetchMovieByName(@PathVariable("name") String movieName) throws NoRecommendationsException {
-        List<Movie> movies = movieService.fetchMovieByName(movieName, MINIMUM_RATING, MINIMUM_VOTES);
-        if (movies.isEmpty()) {
-            throw new NoRecommendationsException("No recommendations found");
-        }
-
-        ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-
-    }
-
     @GetMapping("/movies/name/{name}")
-    public ResponseEntity<ApiResponse> fetchMovieByNameExact(@PathVariable("name") String movieName) throws NoRecommendationsException {
-        List<Movie> movies = movieService.fetchMovieByNameExact(movieName);
-        if (movies.isEmpty()) {
-            throw new NoRecommendationsException("No recommendations found");
+    public ResponseEntity<ApiResponse> fetchMovieByName(@PathVariable("name") String movieName) throws NoRecommendationsException {
+        if (movieName.equalsIgnoreCase(movieName)) {
+            List<Movie> movies = movieService.fetchMovieByName(movieName, MINIMUM_RATING, MINIMUM_VOTES);
+            ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
         }
-
-        ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-
+        throw new NoRecommendationsException("No recommendations found");
     }
-
 }

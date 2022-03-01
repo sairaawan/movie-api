@@ -39,6 +39,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
                     " AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")
     List<Movie> findByMovieNameContaining(String movieName, double minimumRating, int minimumVotes);
 
-    List<Movie> findByMovieNameIgnoreCase(String movieName);
+
 
 }

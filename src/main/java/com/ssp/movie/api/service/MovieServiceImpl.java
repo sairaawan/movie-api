@@ -39,8 +39,4 @@ public class MovieServiceImpl implements MovieService {
         return movieRepository.findByMovieNameContaining(movieName, minimumRating, minimumVotes);
     }
 
-    @Override
-    public List<Movie> fetchMovieByNameExact(String movieName) {
-        return movieRepository.findByMovieNameIgnoreCase(movieName);
-    }
 }
