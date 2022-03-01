@@ -11,9 +11,6 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
-    @Query("select s from Movie s where s.averageRating= ?1")
-    List<Movie> getMovieByAverageRating(double averageRating);
-
     @Query(nativeQuery = true,
             value = "SELECT * FROM Movie s WHERE s.releaseYear = :year " +
                     "AND averageRating >= :minimumRating " +
