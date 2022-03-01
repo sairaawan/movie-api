@@ -33,4 +33,14 @@ public class MovieServiceImpl implements MovieService{
     public List<Movie> fetchByMovieId(List<String> movieIds) throws NoRecommendationsException {
         return movieRepository.findByMovieId(movieIds);
     }
+
+    @Override
+    public List<Movie> fetchMovieByName(String movieName) {
+        return movieRepository.findByMovieNameContaining(movieName);
+    }
+
+    @Override
+    public List<Movie> fetchMovieByNameExact(String movieName) {
+        return movieRepository.findByMovieNameIgnoreCase(movieName);
+    }
 }
