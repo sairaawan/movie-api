@@ -108,11 +108,11 @@ public class MovieController {
 
     @GetMapping("/movies/name/{name}")
     public ResponseEntity<ApiResponse> fetchMovieByName(@PathVariable("name") String movieName) throws NoRecommendationsException {
-        if (movieName.equalsIgnoreCase(movieName)) {
-            List<Movie> movies = movieService.fetchMovieByName(movieName, MINIMUM_RATING, MINIMUM_VOTES);
-            ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
-            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        List<Movie> movies = movieService.fetchMovieByName(movieName, MINIMUM_RATING, MINIMUM_VOTES);
+        if (movies.isEmpty()) {
+            throw new NoRecommendationsException("No recommendations found");
         }
-        throw new NoRecommendationsException("No recommendations found");
+        ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }
