@@ -76,6 +76,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>movie-api-aws</finalName>
 	</build>
 
 </project>
