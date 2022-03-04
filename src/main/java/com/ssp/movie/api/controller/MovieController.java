@@ -26,6 +26,10 @@ public class MovieController {
     @Autowired
     PersonService personService;
 
+    private boolean isValidYear(String year) {
+        return year.matches("[12][0-9][0-9][0-9]");
+    }
+
     private final double MINIMUM_RATING = 8.0;
     private final int MINIMUM_VOTES = 1000;
 
@@ -33,14 +37,20 @@ public class MovieController {
 
     @GetMapping("/")
     public String Welcome() {
-        return "Welcome to movies";
+        return "Welcome to the Movi3 API - Please visit /swagger-ui/index.html for details";
     }
 
     //  Get recommendations for a specified year, /movies/year/2019
     @GetMapping("/movies/year/{year}")
-    public ResponseEntity<ApiResponse> fetchMoviesListByYear(@PathVariable("year") int year) throws NoRecommendationsException {
+    public ResponseEntity<ApiResponse> fetchMoviesListByYear(@PathVariable("year") String year) throws NoRecommendationsException {
         LOGGER.info("Inside fetchMovieListByYear of MovieController");
-        List<Movie> movies = movieService.fetchMoviesListByReleaseYear(year, MINIMUM_RATING, MINIMUM_VOTES);
+
+        if (!isValidYear(year)) {
+           throw new IllegalArgumentException("Invalid year specified");
+        }
+
+        int movieYear = Integer.parseInt(year);
+        List<Movie> movies = movieService.fetchMoviesListByReleaseYear(movieYear, MINIMUM_RATING, MINIMUM_VOTES);
 
         if (movies.isEmpty()) {
             throw new NoRecommendationsException("No recommendations found");
@@ -51,9 +61,17 @@ public class MovieController {
 
     //  Get recommendations for a specified year range, /movies/year?startYear=2018&endYear=2020
     @GetMapping("/movies/year")
-    public ResponseEntity getMoviesByCreatedDate(@RequestParam int startYear, @RequestParam int endYear) throws NoRecommendationsException {
+    public ResponseEntity getMoviesByCreatedDate(@RequestParam String startYear, @RequestParam String endYear) throws NoRecommendationsException {
         LOGGER.info("Inside getMoviesByCreatedDate of MovieController");
-        List<Movie> movies = movieService.fetchByReleaseYearBetween(startYear, endYear, MINIMUM_RATING, MINIMUM_VOTES);
+
+        if (!isValidYear(startYear) || !isValidYear(endYear) ) {
+            throw new IllegalArgumentException("Invalid year specified");
+        }
+
+        int movieStartYear = Integer.parseInt(startYear);
+        int movieEndYear = Integer.parseInt(endYear);
+
+        List<Movie> movies = movieService.fetchByReleaseYearBetween(movieStartYear, movieEndYear, MINIMUM_RATING, MINIMUM_VOTES);
 
         if (movies.isEmpty()) {
             throw new NoRecommendationsException("No recommendations found");

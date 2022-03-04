@@ -111,13 +111,13 @@ public class MovieControllerTests {
     @Test
     public void shouldHandleNoMoviesFoundForAYear() throws Exception {
 
-        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/0"))
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/2999"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
     }
 
     @Test
     public void shouldHandleNoMoviesFoundForAYearRange() throws Exception {
-        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "0").param("endYear", "1"))
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "2900").param("endYear", "2901"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
     }
 
@@ -135,14 +135,6 @@ public class MovieControllerTests {
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/genre/unknown"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusMessage").value("Invalid Genre"));
-    }
-
-    @Test
-    public void shouldHandleInvalidYears() throws Exception {
-
-        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/0"))
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
-
     }
 
     @Test
@@ -179,5 +171,34 @@ public class MovieControllerTests {
 
     }
 
+    @Test
+    public void shouldHandleInvalidYearFormat() throws Exception {
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/19"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException));
+
+    }
+
+    @Test
+    public void shouldHandleYearContainingChars() throws Exception {
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/19xx"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException));
+
+    }
+
+    @Test
+    public void shouldHandleInvalidStartYearFormat() throws Exception {
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "19").param("endYear", "1901"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException));
+
+    }
+
+    @Test
+    public void shouldHandleInvalidEndYearFormat() throws Exception {
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "1999").param("endYear", "19"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException));
+
+    }
 
 }
