@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -25,5 +26,13 @@ public class Movie {
     private String movieGenre;
     private double averageRating;
     private int numberOfVotes;
+
+    public String toEmailContent() {
+        return MessageFormat.format("<b>{0}</b><br>Released: {1}<br>Running Time: {2}<br>Genre: {3}" +
+                        "<br>Rating: {4} from {5} votes" +
+                        "<br>More Details: https://www.imdb.com/title/{6}<br>"
+                        ,movieName,Integer.toString(releaseYear),runningTime,movieGenre
+                        ,averageRating,numberOfVotes,movieId);
+    }
 }
 

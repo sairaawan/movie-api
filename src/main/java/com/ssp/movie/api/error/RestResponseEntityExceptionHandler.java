@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.util.Collections;
 
 @ControllerAdvice
 @ResponseStatus
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = {IllegalArgumentException.class, NoRecommendationsException.class})
+    @ExceptionHandler(value = {IllegalArgumentException.class, NoRecommendationsException.class, IOException.class})
     public ResponseEntity<ApiResponse> MovieAPIException(Exception exception, WebRequest request) {
 
         ApiResponse apiResponse = new ApiResponse(exception.getMessage(), false, Collections.emptyList());
