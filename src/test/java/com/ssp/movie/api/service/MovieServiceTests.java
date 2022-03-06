@@ -86,7 +86,7 @@ public class MovieServiceTests {
 
     @Test
     public void shouldBeAbleToFetchMoviesByName() throws NoRecommendationsException {
-        String movie="movie001";
+        String movie="Test Movie 1";
         when(mockMovieRepository.findByMovieNameContaining(movie, 8,1000)).thenReturn(movies);
         List<Movie> actualResult = movieServiceImpl.fetchMovieByName(movie,8,1000);
 
