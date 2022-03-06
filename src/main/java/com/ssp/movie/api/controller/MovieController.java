@@ -5,6 +5,7 @@ import com.ssp.movie.api.entity.GenreEnum;
 import com.ssp.movie.api.entity.Movie;
 import com.ssp.movie.api.entity.Person;
 import com.ssp.movie.api.error.NoRecommendationsException;
+import com.ssp.movie.api.service.ConfigService;
 import com.ssp.movie.api.service.EmailService;
 import com.ssp.movie.api.service.MovieService;
 import com.ssp.movie.api.service.PersonService;
@@ -13,17 +14,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
 @RestController
+@Component
 public class MovieController {
     @Autowired
     MovieService movieService;
@@ -33,6 +37,18 @@ public class MovieController {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    private ConfigService configService;
+
+    private static int minimumVotes;
+    private static double minimumRating;
+
+    @PostConstruct
+    public void initialise() {
+        minimumVotes = configService.getMinimumVotes();
+        minimumRating = configService.getMinimumRating();
+    }
 
     private boolean isValidYear(String year) {
         return year.matches("[12][0-9][0-9][0-9]");
@@ -48,9 +64,6 @@ public class MovieController {
         }
         return new ApiResponse("Movies recommended", true, movies);
     }
-
-    private final double MINIMUM_RATING = 8.0;
-    private final int MINIMUM_VOTES = 1000;
 
     private final Logger LOGGER = LoggerFactory.getLogger(MovieController.class);
 
@@ -72,7 +85,7 @@ public class MovieController {
         }
 
         int movieYear = Integer.parseInt(year);
-        List<Movie> movies = movieService.fetchMoviesListByReleaseYear(movieYear, MINIMUM_RATING, MINIMUM_VOTES);
+        List<Movie> movies = movieService.fetchMoviesListByReleaseYear(movieYear, minimumRating, minimumVotes);
         ApiResponse apiResponse = buildResponse(movies,emailAddress,MessageFormat.format("Movies from {0}", year));
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -92,7 +105,7 @@ public class MovieController {
         int movieStartYear = Integer.parseInt(startYear);
         int movieEndYear = Integer.parseInt(endYear);
 
-        List<Movie> movies = movieService.fetchByReleaseYearBetween(movieStartYear, movieEndYear, MINIMUM_RATING, MINIMUM_VOTES);
+        List<Movie> movies = movieService.fetchByReleaseYearBetween(movieStartYear, movieEndYear, minimumRating, minimumVotes);
 
         ApiResponse apiResponse = buildResponse(movies,emailAddress,MessageFormat.format("Movies from {0} to {1}", startYear, endYear));
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
@@ -110,7 +123,7 @@ public class MovieController {
             throw new IllegalArgumentException("Invalid Genre");
         }
 
-        List<Movie> movies = movieService.fetchByGenre(GenreEnum.valueOf(genre.toUpperCase()).getName(), MINIMUM_RATING, MINIMUM_VOTES);
+        List<Movie> movies = movieService.fetchByGenre(GenreEnum.valueOf(genre.toUpperCase()).getName(), minimumRating, minimumVotes);
         ApiResponse apiResponse = buildResponse(movies,emailAddress,MessageFormat.format("Movies for the {0} genre", genre));
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
@@ -142,7 +155,7 @@ public class MovieController {
 
     @GetMapping("/movies/name/{name}")
     public ResponseEntity<ApiResponse> fetchMovieByName(@PathVariable("name") String movieName) throws NoRecommendationsException {
-        List<Movie> movies = movieService.fetchMovieByName(movieName, MINIMUM_RATING, MINIMUM_VOTES);
+        List<Movie> movies = movieService.fetchMovieByName(movieName, minimumRating, minimumVotes);
         if (movies.isEmpty()) {
             throw new NoRecommendationsException("No recommendations found");
         }
