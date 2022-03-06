@@ -87,12 +87,12 @@ public class MovieController {
         int movieYear = Integer.parseInt(year);
         List<Movie> movies = movieService.fetchMoviesListByReleaseYear(movieYear, minimumRating, minimumVotes);
         ApiResponse apiResponse = buildResponse(movies,emailAddress,MessageFormat.format("Movies from {0}", year));
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     //  Get recommendations for a specified year range, /movies/year?startYear=2018&endYear=2020
     @GetMapping("/movies/year")
-    public ResponseEntity getMoviesByCreatedDate(@RequestParam String startYear, @RequestParam String endYear,
+    public ResponseEntity<ApiResponse> getMoviesByCreatedDate(@RequestParam String startYear, @RequestParam String endYear,
                                                  @RequestParam(value = "emailAddress", defaultValue = "") String emailAddress)
             throws NoRecommendationsException, IOException {
 
@@ -108,12 +108,12 @@ public class MovieController {
         List<Movie> movies = movieService.fetchByReleaseYearBetween(movieStartYear, movieEndYear, minimumRating, minimumVotes);
 
         ApiResponse apiResponse = buildResponse(movies,emailAddress,MessageFormat.format("Movies from {0} to {1}", startYear, endYear));
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     //  Get recommendations for a specified genre
     @GetMapping("/movies/genre/{genre}")
-    public ResponseEntity getMoviesByGenre(@PathVariable("genre") String genre,
+    public ResponseEntity<ApiResponse> getMoviesByGenre(@PathVariable("genre") String genre,
                                            @RequestParam(value = "emailAddress", defaultValue = "") String emailAddress)
             throws NoRecommendationsException, IOException {
 
@@ -126,13 +126,13 @@ public class MovieController {
         List<Movie> movies = movieService.fetchByGenre(GenreEnum.valueOf(genre.toUpperCase()).getName(), minimumRating, minimumVotes);
         ApiResponse apiResponse = buildResponse(movies,emailAddress,MessageFormat.format("Movies for the {0} genre", genre));
 
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
 
     //  Get recommendations for a specified person
     @GetMapping("/movies/person/{name}")
-    public ResponseEntity getMoviesByPerson(@PathVariable("name") String name) throws NoRecommendationsException {
+    public ResponseEntity<ApiResponse> getMoviesByPerson(@PathVariable("name") String name) throws NoRecommendationsException {
         LOGGER.info("Inside getMoviesByGenre of MovieController");
 
         List<Person> person = personService.fetchByPrimaryName(name);
@@ -150,7 +150,7 @@ public class MovieController {
         }
 
         ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("/movies/name/{name}")
@@ -160,6 +160,6 @@ public class MovieController {
             throw new NoRecommendationsException("No recommendations found");
         }
         ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }

@@ -7,12 +7,12 @@ import java.util.stream.Stream;
 
 public enum GenreEnum {
     ACTION("Action"),
-    ADVENTRUE("Adventure"),
+    ADVENTURE("Adventure"),
     ANIMATION("Animation"),
     BIOGRAPHY("Biography"),
     COMEDY("Comedy"),
     CRIME("Crime"),
-    DOCUMENTRY("Documentary"),
+    DOCUMENTARY("Documentary"),
     DRAMA("Drama"),
     FAMILY("Family"),
     FANTASY("Fantasy"),
@@ -31,7 +31,7 @@ public enum GenreEnum {
     WESTERN("Western");
 
 
-    private String genreLookupName;
+    private final String genreLookupName;
 
     GenreEnum(String genre) {
         this.genreLookupName = genre;
@@ -45,7 +45,7 @@ public enum GenreEnum {
     }
 
     public static boolean isValidGenre(String genre) {
-        return (GENRE_MAP.get(genre.toUpperCase()) != null) ? true : false;
+        return GENRE_MAP.get(genre.toUpperCase()) != null;
     }
 
 }

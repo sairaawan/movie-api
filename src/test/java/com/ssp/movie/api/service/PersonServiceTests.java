@@ -1,7 +1,6 @@
 package com.ssp.movie.api.service;
 
 import com.ssp.movie.api.entity.Person;
-import com.ssp.movie.api.error.NoRecommendationsException;
 import com.ssp.movie.api.repository.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

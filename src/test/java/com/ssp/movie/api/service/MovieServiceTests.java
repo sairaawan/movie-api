@@ -1,7 +1,6 @@
 package com.ssp.movie.api.service;
 
 import com.ssp.movie.api.entity.Movie;
-import com.ssp.movie.api.error.NoRecommendationsException;
 import com.ssp.movie.api.repository.MovieRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,16 +29,15 @@ public class MovieServiceTests {
     private ConfigService configService;
 
     private List<Movie> movies;
-    private int minimumVotes;
-    private double minimumRating;
-
+    private static int minimumVotes;
+    private static double minimumRating;
 
     @BeforeEach
     public void setUp()
     {
         minimumVotes = configService.getMinimumVotes();
         minimumRating = configService.getMinimumRating();
-        
+
         movies = new ArrayList<>();
         movies.add(new Movie("Movie001", "movie", "Test Movie 1", 2018, 100, "Action", minimumRating, minimumVotes));
         movies.add(new Movie("Movie002", "movie", "Test Movie 2", 2018, 100, "Action", minimumRating, minimumVotes));
@@ -48,7 +46,7 @@ public class MovieServiceTests {
     }
 
     @Test
-    public void shouldBeAbleToFetchMoviesListByReleaseYear() throws NoRecommendationsException {
+    public void shouldBeAbleToFetchMoviesListByReleaseYear() {
 
         when(mockMovieRepository.findByReleaseYear(2018, minimumRating, minimumVotes))
                 .thenReturn(movies);
@@ -59,7 +57,7 @@ public class MovieServiceTests {
     }
 
     @Test
-    public void shouldBeAbleToFetchReleaseYearBetween() throws NoRecommendationsException {
+    public void shouldBeAbleToFetchReleaseYearBetween() {
 
         when(mockMovieRepository.findByReleaseYearBetween(2018, 2019,minimumRating, minimumVotes))
                 .thenReturn(movies);
@@ -71,7 +69,7 @@ public class MovieServiceTests {
 
 
     @Test
-    public void shouldBeAbleToFetchMoviesByGenre() throws NoRecommendationsException {
+    public void shouldBeAbleToFetchMoviesByGenre() {
 
         String genre = "Action";
         when(mockMovieRepository.findByGenre(genre, minimumRating, minimumVotes))
@@ -83,7 +81,7 @@ public class MovieServiceTests {
     }
 
     @Test
-    public void shouldBeAbleToFetchMoviesById() throws NoRecommendationsException {
+    public void shouldBeAbleToFetchMoviesById() {
 
         List<String> movieIds = Arrays.asList("Movie001","Movie002","Movie003");
         when(mockMovieRepository.findByMovieId(movieIds)).thenReturn(movies);
@@ -94,7 +92,7 @@ public class MovieServiceTests {
     }
 
     @Test
-    public void shouldBeAbleToFetchMoviesByName() throws NoRecommendationsException {
+    public void shouldBeAbleToFetchMoviesByName() {
         String movie="Test Movie 1";
         when(mockMovieRepository.findByMovieNameContaining(movie, minimumRating, minimumVotes)).thenReturn(movies);
         List<Movie> actualResult = movieServiceImpl.fetchMovieByName(movie,minimumRating, minimumVotes);

@@ -55,13 +55,16 @@ public class MovieControllerTests {
     private List<String> movieIds;
     private List<Movie> emptyMovieList;
 
-    private int minimumVotes;
-    private double minimumRating;
+    private static int minimumVotes;
+    private static double minimumRating;
 
 
     @BeforeEach
     public void setup() {
         mockMvcController = MockMvcBuilders.standaloneSetup(movieController).setControllerAdvice(new RestResponseEntityExceptionHandler()).build();
+
+        minimumVotes = configService.getMinimumVotes();
+        minimumRating = configService.getMinimumRating();
 
         movies = new ArrayList<>();
         movies.add(new Movie("Movie001", "movie", "Test Movie 1", 2018, 100, "Action", minimumRating, minimumVotes));
@@ -74,8 +77,13 @@ public class MovieControllerTests {
         movieIds = Arrays.asList("Movie001", "Movie002", "Movie003");
         emptyMovieList = new ArrayList<>();
 
-        minimumVotes = configService.getMinimumVotes();
-        minimumRating = configService.getMinimumRating();
+    }
+
+    @Test
+    public void shouldReturnHomePage() throws Exception {
+        String welcome = "Welcome to the Movi3 API - Please visit /swagger-ui/index.html for details";
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/"))
+                .equals(welcome);
     }
 
     @Test
@@ -129,6 +137,29 @@ public class MovieControllerTests {
     public void shouldHandleNoMoviesFoundForAYear() throws Exception {
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/2999"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
+    }
+
+    @Test
+    public void shouldReturnMovieRecommendationsByMovieName() throws Exception {
+
+        String movie = "Test Movie 1";
+        when(mockMovieServiceImpl.fetchMovieByName(movie, minimumRating, minimumVotes)).thenReturn(movies);
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/name/Test Movie 1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieId").value("Movie001"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieGenre").value("Action"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieId").value("Movie002"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieGenre").value("Action"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieId").value("Movie003"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieGenre").value("Action"));
+    }
+
+    @Test
+    public void shouldHandleNoMoviesFoundForAMovie() throws Exception {
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/name/xyz"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
     }
 
@@ -207,6 +238,7 @@ public class MovieControllerTests {
 
     @Test
     public void shouldHandleInvalidStartYearFormat() throws Exception {
+
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "19")
                         .param("endYear", "1901"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException));
@@ -215,6 +247,7 @@ public class MovieControllerTests {
 
     @Test
     public void shouldHandleInvalidEndYearFormat() throws Exception {
+
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "1999")
                         .param("endYear", "19"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException));
