@@ -3,6 +3,7 @@ package com.ssp.movie.api.service;
 import com.ssp.movie.api.entity.Movie;
 import com.ssp.movie.api.error.NoRecommendationsException;
 import com.ssp.movie.api.repository.MovieRepository;
+import com.ssp.movie.api.repository.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,6 +25,7 @@ public class MovieServiceTests {
 
     @InjectMocks
     private MovieServiceImpl movieServiceImpl;
+
 
     private List<Movie> movies;
 
@@ -77,6 +79,16 @@ public class MovieServiceTests {
         List<String> movieIds = Arrays.asList("Movie001","Movie002","Movie003");
         when(mockMovieRepository.findByMovieId(movieIds)).thenReturn(movies);
         List<Movie> actualResult = movieServiceImpl.fetchByMovieId(movieIds);
+
+        assertThat(actualResult).hasSize(3);
+        assertThat(actualResult).isEqualTo(movies);
+    }
+
+    @Test
+    public void shouldBeAbleToFetchMoviesByName() throws NoRecommendationsException {
+        String movie="movie001";
+        when(mockMovieRepository.findByMovieNameContaining(movie, 8,1000)).thenReturn(movies);
+        List<Movie> actualResult = movieServiceImpl.fetchMovieByName(movie,8,1000);
 
         assertThat(actualResult).hasSize(3);
         assertThat(actualResult).isEqualTo(movies);
