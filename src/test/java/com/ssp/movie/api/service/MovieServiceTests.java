@@ -37,13 +37,14 @@ public class MovieServiceTests {
     @BeforeEach
     public void setUp()
     {
+        minimumVotes = configService.getMinimumVotes();
+        minimumRating = configService.getMinimumRating();
+        
         movies = new ArrayList<>();
         movies.add(new Movie("Movie001", "movie", "Test Movie 1", 2018, 100, "Action", minimumRating, minimumVotes));
         movies.add(new Movie("Movie002", "movie", "Test Movie 2", 2018, 100, "Action", minimumRating, minimumVotes));
         movies.add(new Movie("Movie003", "movie", "Test Movie 3", 2018, 100, "Action", minimumRating, minimumVotes));
 
-        minimumVotes = configService.getMinimumVotes();
-        minimumRating = configService.getMinimumRating();
     }
 
     @Test
