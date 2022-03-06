@@ -5,9 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.ssp.movie.api.service.ConfigService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +28,13 @@ public class EmailServiceTests {
     private double minimumRating;
     private String testEmail;
 
+
     @BeforeEach
     public void setUp() {
+
+        minimumVotes = configService.getMinimumVotes();
+        minimumRating = configService.getMinimumRating();
+
         movies = new ArrayList<>();
         movies.add(new Movie("Movie001", "movie", "Test Movie 1", 2018, 100, "Action", minimumRating, minimumVotes));
         movies.add(new Movie("Movie002", "movie", "Test Movie 2", 2018, 100, "Action", minimumRating, minimumVotes));
@@ -39,8 +42,6 @@ public class EmailServiceTests {
 
         testEmail = System.getenv("TEST_EMAIL");
 
-        minimumVotes = configService.getMinimumVotes();
-        minimumRating = configService.getMinimumRating();
     }
 
     @Test
