@@ -41,7 +41,7 @@ This API recommends three movies at most based minimum votes and average ratings
 git clone https://github.com/sairaawan/movie-api.git
 
 2.Install required programs
-In order to follow the user needs to have MySQL and Postman. Below are the short terminal lines for easy installation:
+In order to follow, the user needs to have MySQL and Postman. Below are the short terminal lines for easy installation:
 - sudo apt update
 - sudo snap install postman
 - sudo apt install MySQL
@@ -60,7 +60,7 @@ If you have changed default user for creating database with some different usern
 - spring.jpa.hibernate.ddl-auto=update
 
 5. Run the spring boot application
-If you download /clone repo elsewhere ,change the path update accordingly
+If you download /clone repo elsewhere ,change the path update accordingly:
 - cd Documents/Movie API
 - mvn clean install
 - java -jar target/api-movies-data-0.0.1
