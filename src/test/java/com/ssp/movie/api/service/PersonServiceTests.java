@@ -34,7 +34,7 @@ public class PersonServiceTests {
     }
 
     @Test
-    public void shouldBeAbleToFetchPeopleByName() throws NoRecommendationsException {
+    public void shouldBeAbleToFetchPeopleByName() {
 
         when(mockPeopleRepository.findByPrimaryNameIgnoreCase("Tom Hanks")).thenReturn(people);
         List<Person> actualResult = peopleServiceImpl.fetchByPrimaryName("Tom Hanks");

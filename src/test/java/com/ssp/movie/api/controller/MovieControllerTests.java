@@ -4,6 +4,7 @@ import com.ssp.movie.api.entity.Movie;
 import com.ssp.movie.api.entity.Person;
 import com.ssp.movie.api.error.NoRecommendationsException;
 import com.ssp.movie.api.error.RestResponseEntityExceptionHandler;
+import com.ssp.movie.api.service.ConfigService;
 import com.ssp.movie.api.service.EmailServiceImpl;
 import com.ssp.movie.api.service.MovieServiceImpl;
 import com.ssp.movie.api.service.PersonServiceImpl;
@@ -46,12 +47,16 @@ public class MovieControllerTests {
     @Autowired
     private MockMvc mockMvcController;
 
+    @Autowired
+    private ConfigService configService;
+
     private List<Movie> movies;
     private List<Person> people;
     private List<String> movieIds;
     private List<Movie> emptyMovieList;
-    private static final double MINIMUM_RATING = 8.0;
-    private static final int MINIMUM_VOTES = 1000;
+
+    private int minimumVotes;
+    private double minimumRating;
 
 
     @BeforeEach
@@ -59,28 +64,24 @@ public class MovieControllerTests {
         mockMvcController = MockMvcBuilders.standaloneSetup(movieController).setControllerAdvice(new RestResponseEntityExceptionHandler()).build();
 
         movies = new ArrayList<>();
-        movies.add(new Movie("Movie001", "movie", "Test Movie 1", 2018, 100, "Action", 8.5, 1000));
-        movies.add(new Movie("Movie002", "movie", "Test Movie 2", 2018, 100, "Action", 8.5, 1000));
-        movies.add(new Movie("Movie003", "movie", "Test Movie 3", 2018, 100, "Action", 8.5, 1000));
+        movies.add(new Movie("Movie001", "movie", "Test Movie 1", 2018, 100, "Action", minimumRating, minimumVotes));
+        movies.add(new Movie("Movie002", "movie", "Test Movie 2", 2018, 100, "Action", minimumRating, minimumVotes));
+        movies.add(new Movie("Movie003", "movie", "Test Movie 3", 2018, 100, "Action", minimumRating, minimumVotes));
 
         people = new ArrayList<>();
         people.add(new Person("Person001", "Tom Hanks", 1956, null, "Actor", "Movie001,Movie002,Movie003"));
 
         movieIds = Arrays.asList("Movie001", "Movie002", "Movie003");
         emptyMovieList = new ArrayList<>();
-    }
 
-    @Test
-    public void shouldReturnHomePage() throws Exception {
-        String welcome = "Welcome to the Movi3 API - Please visit /swagger-ui/index.html for details";
-        this.mockMvcController.perform(MockMvcRequestBuilders.get("/"))
-                .equals(welcome);
+        minimumVotes = configService.getMinimumVotes();
+        minimumRating = configService.getMinimumRating();
     }
 
     @Test
     public void shouldReturnMovieRecommendationsForTheYear() throws Exception {
 
-        when(mockMovieServiceImpl.fetchMoviesListByReleaseYear(2018, MINIMUM_RATING, MINIMUM_VOTES)).thenReturn(movies);
+        when(mockMovieServiceImpl.fetchMoviesListByReleaseYear(2018, minimumRating, minimumVotes)).thenReturn(movies);
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/2018"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -95,7 +96,7 @@ public class MovieControllerTests {
     @Test
     public void shouldReturnMovieRecommendationsForYearBetweenTwoYears() throws Exception {
 
-        when(mockMovieServiceImpl.fetchByReleaseYearBetween(2016, 2018, MINIMUM_RATING, MINIMUM_VOTES)).thenReturn(movies);
+        when(mockMovieServiceImpl.fetchByReleaseYearBetween(2016, 2018, minimumRating, minimumVotes)).thenReturn(movies);
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/").param("startYear", "2016")
                         .param("endYear", "2018"))
@@ -112,7 +113,7 @@ public class MovieControllerTests {
     public void shouldReturnMovieRecommendationsByGenre() throws Exception {
 
         String genre = "Action";
-        when(mockMovieServiceImpl.fetchByGenre(genre, MINIMUM_RATING, MINIMUM_VOTES)).thenReturn(movies);
+        when(mockMovieServiceImpl.fetchByGenre(genre, minimumRating, minimumVotes)).thenReturn(movies);
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/genre/Action"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -122,29 +123,6 @@ public class MovieControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieGenre").value("Action"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieId").value("Movie003"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieGenre").value("Action"));
-    }
-
-    @Test
-    public void shouldReturnMovieRecommendationsByMovieName() throws Exception {
-
-        String movie = "Test Movie 1";
-        when(mockMovieServiceImpl.fetchMovieByName(movie, MINIMUM_RATING, MINIMUM_VOTES)).thenReturn(movies);
-
-        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/name/Test Movie 1"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieId").value("Movie001"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieGenre").value("Action"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieId").value("Movie002"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieGenre").value("Action"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieId").value("Movie003"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieGenre").value("Action"));
-    }
-
-    @Test
-    public void shouldHandleNoMoviesFoundForAMovie() throws Exception {
-
-        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/name/xyz"))
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
     }
 
     @Test
@@ -164,11 +142,10 @@ public class MovieControllerTests {
     @Test
     public void shouldHandleNoMoviesFoundForAGenre() throws Exception {
         String genre = "Thriller";
-        when(mockMovieServiceImpl.fetchByGenre(genre, MINIMUM_RATING, MINIMUM_VOTES)).thenReturn(emptyMovieList);
+        when(mockMovieServiceImpl.fetchByGenre(genre, minimumRating, minimumVotes)).thenReturn(emptyMovieList);
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/genre/Thriller"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
     }
-
 
     @Test
     public void shouldHandleInvalidGenres() throws Exception {
@@ -197,7 +174,7 @@ public class MovieControllerTests {
     @Test
     public void shouldHandleInvalidPerson() throws Exception {
 
-        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/person/uknown"))
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/person/unknown"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
 
     }
@@ -251,7 +228,7 @@ public class MovieControllerTests {
         String year = "2016";
         String expectedSearchText = MessageFormat.format("Movies from {0}", year);
 
-        when(mockMovieServiceImpl.fetchMoviesListByReleaseYear(Integer.parseInt(year), MINIMUM_RATING, MINIMUM_VOTES))
+        when(mockMovieServiceImpl.fetchMoviesListByReleaseYear(Integer.parseInt(year), minimumRating, minimumVotes))
                 .thenReturn(movies);
 
         doNothing().when(mockEmailServiceImpl).sendEmail(expectedSearchText, testEmail, movies);
@@ -271,7 +248,7 @@ public class MovieControllerTests {
         String expectedSearchText = MessageFormat.format("Movies from {0} to {1}", startYear, endYear);
 
         when(mockMovieServiceImpl.fetchByReleaseYearBetween(Integer.parseInt(startYear), Integer.parseInt(endYear),
-                MINIMUM_RATING, MINIMUM_VOTES))
+                 minimumRating, minimumVotes))
                 .thenReturn(movies);
 
         doNothing().when(mockEmailServiceImpl).sendEmail(expectedSearchText, testEmail, movies);
@@ -292,7 +269,7 @@ public class MovieControllerTests {
         String genre = "Action";
         String expectedSearchText = MessageFormat.format("Movies for the {0} genre", genre);
 
-        when(mockMovieServiceImpl.fetchByGenre(genre, MINIMUM_RATING, 1000)).thenReturn(movies);
+        when(mockMovieServiceImpl.fetchByGenre(genre, minimumRating, minimumVotes)).thenReturn(movies);
 
         doNothing().when(mockEmailServiceImpl).sendEmail(expectedSearchText, testEmail, movies);
 
