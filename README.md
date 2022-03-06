@@ -7,6 +7,10 @@ Each movie entry has a way of displaying movie details.
 Data Format: The API uses HTTP methods and can return data in JSON format
 Based on IMDB (Internet Movie Database) data is available at https://www.imdb.com/interfaces/
 
+### Pre-Requisites
+- Java SE Development Kit 11
+- Maven
+
 ### Technologies
 - Java
 - Spring Boot
