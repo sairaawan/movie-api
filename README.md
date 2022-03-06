@@ -37,16 +37,19 @@ Get Movie recommendations based on inputted criteria, e.g.:
 
 1.Download or clone the repository from GitHub	
 git clone https://github.com/sairaawan/movie-api.git
+
 2.Install required programs
 In order to follow the user needs to have MySQL and Postman. Below are the short terminal lines for easy installation:
 - sudo apt update
 - sudo snap install postman
 - sudo apt install MySQL
+
 3.Setup database project
 In the root application directory (API-movies-data), SQL script file (project_setup.sql)is present for creating a database. Run the script using psql client:
 - cd Documents/api-movies-data
 - mysql -u root -p
 - --file project_setup.sql
+
 4.Update database configurations in application properties
 If you have changed default user for creating database with some different username and password,update the src/main/resources/application.properties file accordingly:
 - spring.jpa.hibernate.ddl-auto=create 
