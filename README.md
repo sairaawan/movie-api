@@ -1,14 +1,13 @@
 # Movie Recommender API 
 
-## Introduction
+### Introduction
 
 This API allows users to search for Movies and gather information about Movies.
+Each movie entry has a way of displaying movie details.
+Data Format: The API uses HTTP methods and can return data in JSON format
+Based on IMDB (Internet Movie Database) data is available at https://www.imdb.com/interfaces/
 
-Each movie entry has a way of displaying movie details.Data Format: The API uses HTTP methods and can return data in JSON format
-
-
-
-## Technologies
+### Technologies
 - Java
 - Spring Boot
 - MYSQL
@@ -21,7 +20,7 @@ Each movie entry has a way of displaying movie details.Data Format: The API uses
 - AWS
 - Docker
 
-## Movie API Specification
+### Movie API Specification
 Get Movie recommendations based on inputted criteria, e.g.:
 - Year
 - Genre
@@ -31,9 +30,11 @@ Get Movie recommendations based on inputted criteria, e.g.:
 - Comments
 - Likes
 
+### 
 
 
-## Setup and Installation
+
+### Setup and Installation
 
 1.Download or clone the repository from GitHub	
 git clone https://github.com/sairaawan/movie-api.git
