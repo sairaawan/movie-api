@@ -73,7 +73,7 @@ In the root application directory (Movie API),SQL script file(db.script)is prese
 - psql -U MySql --file project_db.sql
 
 ### Deployment
-- The project is depoyed as Docker image on AWS Elastic beanstalk. Visit http://api.movi3.me.uk/ to view the AP
+- The project is depoyed as Docker image on AWS Elastic beanstalk. Visit http://api.movi3.me.uk/ to view the API
 - To view the Endpoints visit  http://api.movi3.me.uk/swagger-ui/index.html
 
 
