@@ -71,6 +71,13 @@ public class MovieControllerTests {
     }
 
     @Test
+    public void shouldReturnHomePage() throws Exception {
+        String welcome = "Welcome to the Movi3 API - Please visit /swagger-ui/index.html for details";
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/"))
+                .equals(welcome);
+    }
+
+    @Test
     public void shouldReturnMovieRecommendationsForTheYear() throws Exception {
 
         when(mockMovieServiceImpl.fetchMoviesListByReleaseYear(2018, MINIMUM_RATING, MINIMUM_VOTES)).thenReturn(movies);
@@ -118,6 +125,29 @@ public class MovieControllerTests {
     }
 
     @Test
+    public void shouldReturnMovieRecommendationsByMovieName() throws Exception {
+
+        String movie = "Test Movie 1";
+        when(mockMovieServiceImpl.fetchMovieByName(movie, MINIMUM_RATING, MINIMUM_VOTES)).thenReturn(movies);
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/name/Test Movie 1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieId").value("Movie001"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieGenre").value("Action"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieId").value("Movie002"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieGenre").value("Action"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieId").value("Movie003"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieGenre").value("Action"));
+    }
+
+    @Test
+    public void shouldHandleNoMoviesFoundForAMovie() throws Exception {
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/name/xyz"))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
+    }
+
+    @Test
     public void shouldHandleNoMoviesFoundForAYear() throws Exception {
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/2999"))
@@ -138,6 +168,7 @@ public class MovieControllerTests {
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/genre/Thriller"))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoRecommendationsException));
     }
+
 
     @Test
     public void shouldHandleInvalidGenres() throws Exception {
