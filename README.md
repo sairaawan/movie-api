@@ -21,18 +21,19 @@ Based on IMDB (Internet Movie Database) data is available at https://www.imdb.co
 - Docker
 
 ### Movie API Specification
-Get Movie recommendations based on inputted criteria, e.g.:
+This API recommends three movies at most based minimum votes and average ratings given:
 - Year
 - Genre
-- Actor
-- Ratings
-- Certification
-- Comments
-- Likes
+- Person (associated with the movie)
+- Name of movie
 
-### 
+### Main Entry Point
+- The Main Entry Point for the application is: [MovieApiApplication.java](src/main/java/com/ssp/movie/api/MovieApiApplication.java)
 
+### Running the Unit Tests
+- You can run the unit tests in IntelliJ, or you can go to your terminal and inside the root of this directory, run:
 
+`mvn test`
 
 ### Setup and Installation
 
@@ -57,14 +58,22 @@ If you have changed default user for creating database with some different usern
 - spring.datasource.url=jdbc:mysql://localhost:3306/MovieAPI
 - spring.datasource.username=root
 - spring.jpa.hibernate.ddl-auto=update
+
 5. Run the spring boot application
 If you download /clone repo elsewhere ,change the path update accordingly
 - cd Documents/Movie API
 - mvn clean install
 - java -jar target/api-movies-data-0.0.1
-this runs at port 8080and hence all  endpoints can be accessed starting from http://localhost:8080
+this runs at port 8080 and hence all  endpoints can be accessed starting from http://localhost:8080
+
 6. Create database objects (if you want some prerecorded  values in local database)
 In the root application directory (Movie API),SQL script file(db.script)is present for populating database with some records
 - Run the script using psql client
 - cd Documents/Movie API
 - psql -U MySql --file project_db.sql
+
+### Deployment
+- The project is depoyed as Docker image on AWS Elastic beanstalk. Visit http://api.movi3.me.uk/ to view the AP
+- To view the Endpoints visit  http://api.movi3.me.uk/swagger-ui/index.html
+
+
