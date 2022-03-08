@@ -4,7 +4,7 @@ import com.ssp.movie.api.entity.Movie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -12,46 +12,50 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
 public class EmailServiceTests {
 
+    @Mock
+    private ConfigService mockConfigService;
+
     @InjectMocks
     private EmailServiceImpl emailService;
 
-    @Autowired
-    private ConfigService configService;
-
     private List<Movie> movies;
-    private int minimumVotes;
-    private double minimumRating;
-    private String testEmail;
-
 
     @BeforeEach
     public void setUp() {
 
-        minimumVotes = configService.getMinimumVotes();
-        minimumRating = configService.getMinimumRating();
-
         movies = new ArrayList<>();
-        movies.add(new Movie("Movie001", "movie", "Test Movie 1", 2018, 100, "Action", minimumRating, minimumVotes));
-        movies.add(new Movie("Movie002", "movie", "Test Movie 2", 2018, 100, "Action", minimumRating, minimumVotes));
-        movies.add(new Movie("Movie003", "movie", "Test Movie 3", 2018, 100, "Action", minimumRating, minimumVotes));
-
-        testEmail = System.getenv("TEST_EMAIL");
-
+        movies.add(new Movie("Movie001", "movie", "Test Movie 1", 2018, 100, "Action", 8.0, 1000));
+        movies.add(new Movie("Movie002", "movie", "Test Movie 2", 2018, 100, "Action", 8.0, 1000));
+        movies.add(new Movie("Movie003", "movie", "Test Movie 3", 2018, 100, "Action", 8.0, 1000));
     }
 
     @Test
     public void shouldNotThrowExceptionForValidEmail() {
-         assertDoesNotThrow(() -> emailService.sendEmail("Test Search", testEmail, movies));
+
+        String testEmail = System.getenv("TEST_EMAIL");
+        when(mockConfigService.getSendGridAPIKey()).thenReturn(System.getenv("SENDGRID_API_KEY"));
+        when(mockConfigService.getMailFrom()).thenReturn(System.getenv("MAIL_FROM"));
+
+        assertDoesNotThrow(() -> emailService.sendEmail(testEmail, "Test Search", movies));
     }
 
     @Test
-    public void shouldThrowExceptionForInvalidEmail()  {
-        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail("Test Search", "x@x", movies));
+    public void shouldThrowExceptionForInvalidEmail() {
+        when(mockConfigService.getSendGridAPIKey()).thenReturn("TESTKEY");
+        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail("invalid email", "Test Search", movies));
     }
+
+    @Test
+    public void shouldThrowExceptionIfApiKeyIsNotSet() {
+        when(mockConfigService.getSendGridAPIKey()).thenReturn(null);
+        assertThrows(IllegalStateException.class, () -> emailService.sendEmail("no api key", "Test Search", movies));
+    }
+
 
 }

@@ -54,12 +54,13 @@ git clone https://github.com/sairaawan/movie-api.git
 <br>The application requires configuration of the following environment variables to run: 
 <table>
 <tr><td>prod_movieDB</td><td>e.g. yourdomain:3306/imdb</td></tr>
-<tr><td>prod_db_user</td><td>prod db user</td></tr>
+<tr><td>prod_db_user</td><td>user account for production database</td></tr>
 <tr><td>prod_db_pwd</td><td>password for prod db user</td></tr>
 <tr><td>test_movieDB</td><td>e.g. localhost:3306/imdb</td></tr>
-<tr><td>test_db_user</td><td>test db user/imdb</td></tr>
+<tr><td>test_db_user</td><td>user account for test database/imdb</td></tr>
 <tr><td>test_db_pwd</td><td>password for test db user</td></tr>
 <tr><td>sendgrid_api_key</td><td>your SendGrid API key</td></tr>
+<tr><td>mail_from</td><td>email from address</td></tr>
 <tr><td>test_email</td><td>email address to use for testing</td></tr>
 </table>
 

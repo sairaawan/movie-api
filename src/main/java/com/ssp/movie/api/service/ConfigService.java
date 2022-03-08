@@ -8,10 +8,19 @@ import org.springframework.stereotype.Service;
 @PropertySource("classpath:application.properties")
 public class ConfigService {
 
-    @Value("${app.minimumVotes}")
+    @Value("${app.sendgridapikey}")
+    private String sendGridAPIKey;
+
+    @Value("${app.mailfrom}")
+    private String mailFrom;
+
+    @Value("${app.testemail}")
+    private String testEmail;
+
+    @Value("${app.minimumvotes}")
     private int minimumVotes;
 
-    @Value("${app.minimumRating}")
+    @Value("${app.minimumrating}")
     private double minimumRating;
 
     public int getMinimumVotes() {
@@ -22,5 +31,16 @@ public class ConfigService {
         return minimumRating;
     }
 
+    public String getSendGridAPIKey() {
+        return sendGridAPIKey;
+    }
+
+    public String getMailFrom() {
+        return mailFrom;
+    }
+
+    public String getTestKey() {
+        return "TESTKEY";
+    }
 
 }

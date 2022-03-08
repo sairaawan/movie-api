@@ -4,10 +4,7 @@ import com.ssp.movie.api.entity.Movie;
 import com.ssp.movie.api.entity.Person;
 import com.ssp.movie.api.error.NoRecommendationsException;
 import com.ssp.movie.api.error.RestResponseEntityExceptionHandler;
-import com.ssp.movie.api.service.ConfigService;
-import com.ssp.movie.api.service.EmailServiceImpl;
-import com.ssp.movie.api.service.MovieServiceImpl;
-import com.ssp.movie.api.service.PersonServiceImpl;
+import com.ssp.movie.api.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +12,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -48,7 +46,7 @@ public class MovieControllerTests {
     private MockMvc mockMvcController;
 
     @Autowired
-    private ConfigService configService;
+    private Environment env;
 
     private List<Movie> movies;
     private List<Person> people;
@@ -58,13 +56,12 @@ public class MovieControllerTests {
     private static int minimumVotes;
     private static double minimumRating;
 
-
     @BeforeEach
     public void setup() {
         mockMvcController = MockMvcBuilders.standaloneSetup(movieController).setControllerAdvice(new RestResponseEntityExceptionHandler()).build();
 
-        minimumVotes = configService.getMinimumVotes();
-        minimumRating = configService.getMinimumRating();
+        minimumVotes = Integer.parseInt(env.getProperty("app.minimumVotes"));
+        minimumRating = Double.parseDouble(env.getProperty("app.minimumRating"));
 
         movies = new ArrayList<>();
         movies.add(new Movie("Movie001", "movie", "Test Movie 1", 2018, 100, "Action", minimumRating, minimumVotes));
@@ -82,8 +79,7 @@ public class MovieControllerTests {
     @Test
     public void shouldReturnHomePage() throws Exception {
         String welcome = "Welcome to the Movi3 API - Please visit /swagger-ui/index.html for details";
-        this.mockMvcController.perform(MockMvcRequestBuilders.get("/"))
-                .equals(welcome);
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/")).toString().equals(welcome);
     }
 
     @Test
@@ -264,13 +260,13 @@ public class MovieControllerTests {
         when(mockMovieServiceImpl.fetchMoviesListByReleaseYear(Integer.parseInt(year), minimumRating, minimumVotes))
                 .thenReturn(movies);
 
-        doNothing().when(mockEmailServiceImpl).sendEmail(expectedSearchText, testEmail, movies);
+        doNothing().when(mockEmailServiceImpl).sendEmail(testEmail,expectedSearchText, movies);
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/" + year)
                         .param("emailAddress", testEmail))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(mockEmailServiceImpl, times(1)).sendEmail(expectedSearchText, testEmail, movies);
+        verify(mockEmailServiceImpl, times(1)).sendEmail(testEmail,expectedSearchText, movies);
     }
 
     @Test
@@ -284,7 +280,7 @@ public class MovieControllerTests {
                  minimumRating, minimumVotes))
                 .thenReturn(movies);
 
-        doNothing().when(mockEmailServiceImpl).sendEmail(expectedSearchText, testEmail, movies);
+        doNothing().when(mockEmailServiceImpl).sendEmail(testEmail,expectedSearchText, movies);
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/year/")
                         .param("startYear", startYear)
@@ -292,7 +288,7 @@ public class MovieControllerTests {
                         .param("emailAddress", testEmail))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(mockEmailServiceImpl, times(1)).sendEmail(expectedSearchText, testEmail, movies);
+        verify(mockEmailServiceImpl, times(1)).sendEmail(testEmail,expectedSearchText, movies);
     }
 
 
@@ -304,13 +300,13 @@ public class MovieControllerTests {
 
         when(mockMovieServiceImpl.fetchByGenre(genre, minimumRating, minimumVotes)).thenReturn(movies);
 
-        doNothing().when(mockEmailServiceImpl).sendEmail(expectedSearchText, testEmail, movies);
+        doNothing().when(mockEmailServiceImpl).sendEmail(testEmail,expectedSearchText, movies);
 
         this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies/genre/" + genre)
                         .param("emailAddress", testEmail))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(mockEmailServiceImpl, times(1)).sendEmail(expectedSearchText, testEmail, movies);
+        verify(mockEmailServiceImpl, times(1)).sendEmail(testEmail,expectedSearchText, movies);
     }
 
 
