@@ -15,6 +15,11 @@ public class MovieServiceImpl implements MovieService {
     MovieRepository movieRepository;
 
     @Override
+    public List<Movie> fetchMovies(double minimumRating, int minimumVotes) {
+        return movieRepository.findMovies(minimumRating, minimumVotes);
+    }
+
+    @Override
     public List<Movie> fetchMoviesListByReleaseYear(int year, double minimumRating, int minimumVotes) {
         return movieRepository.findByReleaseYear(year, minimumRating, minimumVotes);
     }

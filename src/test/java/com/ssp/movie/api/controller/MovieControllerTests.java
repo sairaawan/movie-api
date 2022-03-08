@@ -83,6 +83,21 @@ public class MovieControllerTests {
     }
 
     @Test
+    public void shouldReturnMovieRecommendations() throws Exception {
+
+        when(mockMovieServiceImpl.fetchMovies(minimumRating, minimumVotes)).thenReturn(movies);
+
+        this.mockMvcController.perform(MockMvcRequestBuilders.get("/movies"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieId").value("Movie001"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[0].movieName").value("Test Movie 1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieId").value("Movie002"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[1].movieName").value("Test Movie 2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieId").value("Movie003"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.movies[2].movieName").value("Test Movie 3"));
+    }
+
+    @Test
     public void shouldReturnMovieRecommendationsForTheYear() throws Exception {
 
         when(mockMovieServiceImpl.fetchMoviesListByReleaseYear(2018, minimumRating, minimumVotes)).thenReturn(movies);

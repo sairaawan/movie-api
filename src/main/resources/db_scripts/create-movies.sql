@@ -11,7 +11,7 @@ CREATE TABLE  Movie (
   `releaseYear` int(4) unsigned DEFAULT NULL,
   `endYear` int(4) unsigned DEFAULT NULL,
   `runningTime` int(4) unsigned DEFAULT NULL,
-  `movieGenre` varchar(80) COLLATE utf8mb4_general_ci DEFAULT NULL, `averageRating` int(4) unsigned DEFAULT NULL,`numberOfVotes` int(4) unsigned DEFAULT NULL, PRIMARY KEY (`movieId`)
+  `movieGenre` varchar(80) COLLATE utf8mb4_general_ci DEFAULT NULL, `averageRating` float unsigned DEFAULT NULL,`numberOfVotes` int(4) unsigned DEFAULT NULL, PRIMARY KEY (`movieId`)
 )   ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 LOAD DATA LOCAL INFILE 'titles.tsv'
