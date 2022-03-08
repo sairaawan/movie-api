@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface EmailService {
 
-    void sendEmail(String searchType, String emailAddress, List<Movie> movies) throws IllegalArgumentException, IOException;
+    void sendEmail(String mailTo, String searchType, List<Movie> movies) throws IllegalArgumentException, IOException;
 }

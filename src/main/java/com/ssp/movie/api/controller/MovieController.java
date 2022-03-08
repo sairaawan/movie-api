@@ -5,10 +5,7 @@ import com.ssp.movie.api.entity.GenreEnum;
 import com.ssp.movie.api.entity.Movie;
 import com.ssp.movie.api.entity.Person;
 import com.ssp.movie.api.error.NoRecommendationsException;
-import com.ssp.movie.api.service.ConfigService;
-import com.ssp.movie.api.service.EmailService;
-import com.ssp.movie.api.service.MovieService;
-import com.ssp.movie.api.service.PersonService;
+import com.ssp.movie.api.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +57,7 @@ public class MovieController {
         }
 
         if (emailAddress.length() > 0) {
-            emailService.sendEmail(emailSearchText, emailAddress, movies);
+            emailService.sendEmail(emailAddress, emailSearchText, movies);
         }
         return new ApiResponse("Movies recommended", true, movies);
     }

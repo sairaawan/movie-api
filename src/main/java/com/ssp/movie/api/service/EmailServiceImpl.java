@@ -8,6 +8,7 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.ssp.movie.api.entity.Movie;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,10 @@ import java.util.regex.Pattern;
 @Service
 public class EmailServiceImpl implements EmailService {
 
+    @Autowired
+    ConfigService configService;
+
+
     private boolean isValidEmail(String emailAddress) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return Pattern.compile(emailRegex)
@@ -27,13 +32,18 @@ public class EmailServiceImpl implements EmailService {
                 .matches();
     }
 
-    public void sendEmail(String searchType, String emailAddress, List<Movie> movies) throws IllegalArgumentException, IOException {
+    public void sendEmail(String emailAddress, String searchType, List<Movie> movies) throws IllegalArgumentException, IOException {
+
+        String apiKey = configService.getSendGridAPIKey();
+        if (apiKey == null) {
+            throw new IllegalStateException("Email not supported");
+        }
 
         if (!isValidEmail(emailAddress)) {
             throw new IllegalArgumentException("Invalid email address");
         }
 
-        Email from = new Email(System.getenv("MAIL_FROM"));
+        Email from = new Email(configService.getMailFrom());
         String subject = "Your movie recommendations";
         Email to = new Email(emailAddress);
 
@@ -47,15 +57,18 @@ public class EmailServiceImpl implements EmailService {
         Content content = new Content("text/html", emailBody.toString());
         Mail mail = new Mail(from, subject, to, content);
 
-        SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
+        SendGrid sendGrid = new SendGrid(apiKey);
         Request request = new Request();
         request.setMethod(Method.POST);
         request.setEndpoint("mail/send");
         request.setBody(mail.build());
-        Response response = sg.api(request);
 
-        if(!Arrays.asList( HttpStatus.OK.value(), HttpStatus.CREATED.value(), HttpStatus.ACCEPTED.value() ).contains( response.getStatusCode() ) ) {
-            throw new IOException("Failed to send email. Response code: " + response.getStatusCode());
+        if (!apiKey.equals(configService.getTestKey())) {
+            Response response = sendGrid.api(request);
+
+            if (!Arrays.asList(HttpStatus.OK.value(), HttpStatus.CREATED.value(), HttpStatus.ACCEPTED.value()).contains(response.getStatusCode())) {
+                throw new IOException("Failed to send email. Response code: " + response.getStatusCode());
+            }
         }
     }
 }

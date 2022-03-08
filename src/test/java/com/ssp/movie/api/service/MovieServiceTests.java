@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -25,12 +24,13 @@ public class MovieServiceTests {
     @InjectMocks
     private MovieServiceImpl movieServiceImpl;
 
-    @Autowired
+    @Mock
     private ConfigService configService;
 
     private List<Movie> movies;
     private static int minimumVotes;
     private static double minimumRating;
+
 
     @BeforeEach
     public void setUp()
