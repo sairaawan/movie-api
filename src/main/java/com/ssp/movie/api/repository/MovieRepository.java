@@ -12,6 +12,12 @@ import java.util.List;
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     @Query(nativeQuery = true,
+            value = "SELECT * FROM Movie s " +
+                    "WHERE averageRating >= :minimumRating " +
+                    "AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")
+    List<Movie> findMovies(double minimumRating, int minimumVotes);
+
+    @Query(nativeQuery = true,
             value = "SELECT * FROM Movie s WHERE s.releaseYear = :year " +
                     "AND averageRating >= :minimumRating " +
                     "AND numberOfVotes >= :minimumVotes ORDER BY RAND() DESC LIMIT 3")

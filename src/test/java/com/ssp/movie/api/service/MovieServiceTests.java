@@ -45,6 +45,18 @@ public class MovieServiceTests {
 
     }
 
+
+    @Test
+    public void shouldBeAbleToFetchMovies() {
+
+        when(mockMovieRepository.findMovies(minimumRating, minimumVotes))
+                .thenReturn(movies);
+        List<Movie> actualResult = movieServiceImpl.fetchMovies(minimumRating, minimumVotes);
+
+        assertThat(actualResult).hasSize(3);
+        assertThat(actualResult).isEqualTo(movies);
+    }
+
     @Test
     public void shouldBeAbleToFetchMoviesListByReleaseYear() {
 

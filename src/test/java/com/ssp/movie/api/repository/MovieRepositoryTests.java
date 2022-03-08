@@ -44,6 +44,12 @@ public class MovieRepositoryTests {
     }
 
     @Test
+    public void shouldReturnLimitOf3Movies() {
+        List<Movie> movies = movieRepository.findMovies(0,0);
+        assertThat(movies).hasSize(3);
+    }
+
+    @Test
     public void shouldReturnLimitOf3MoviesForSpecifiedYearWithNoZeroValuesForRatingsAndVotes() {
         List<Movie> movies = movieRepository.findByReleaseYear(2018,0,0);
         assertThat(movies).hasSize(3);

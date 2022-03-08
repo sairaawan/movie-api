@@ -69,6 +69,19 @@ public class MovieController {
         return "Welcome to the Movi3 API - Please visit /swagger-ui/index.html for details";
     }
 
+
+    //  Get recommendations with no filter
+    @GetMapping("/movies")
+    public ResponseEntity<ApiResponse> fetchMovies(@RequestParam(value = "emailAddress", defaultValue = "") String emailAddress)
+            throws NoRecommendationsException, IOException {
+
+        LOGGER.info(MessageFormat.format("Inside fetchMovies of MovieController {0}", emailAddress));
+
+        List<Movie> movies = movieService.fetchMovies(minimumRating, minimumVotes);
+        ApiResponse apiResponse = buildResponse(movies,emailAddress,"All types of movies");
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
     //  Get recommendations for a specified year, /movies/year/2019
     @GetMapping("/movies/year/{year}")
     public ResponseEntity<ApiResponse> fetchMoviesListByYear(@PathVariable("year") String year,
