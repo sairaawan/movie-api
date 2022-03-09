@@ -78,7 +78,7 @@ public class MovieController {
         LOGGER.info(MessageFormat.format("Inside fetchMovies of MovieController {0}", emailAddress));
 
         List<Movie> movies = movieService.fetchMovies(minimumRating, minimumVotes);
-        ApiResponse apiResponse = buildResponse(movies,emailAddress,"All types of movies");
+        ApiResponse apiResponse = buildResponse(movies, emailAddress, "All types of movies");
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -96,14 +96,14 @@ public class MovieController {
 
         int movieYear = Integer.parseInt(year);
         List<Movie> movies = movieService.fetchMoviesListByReleaseYear(movieYear, minimumRating, minimumVotes);
-        ApiResponse apiResponse = buildResponse(movies,emailAddress,MessageFormat.format("Movies from {0}", year));
+        ApiResponse apiResponse = buildResponse(movies, emailAddress, MessageFormat.format("Movies from {0}", year));
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     //  Get recommendations for a specified year range, /movies/year?startYear=2018&endYear=2020
     @GetMapping("/movies/year")
     public ResponseEntity<ApiResponse> getMoviesByCreatedDate(@RequestParam String startYear, @RequestParam String endYear,
-                                                 @RequestParam(value = "emailAddress", defaultValue = "") String emailAddress)
+                                                              @RequestParam(value = "emailAddress", defaultValue = "") String emailAddress)
             throws NoRecommendationsException, IOException {
 
         LOGGER.info(MessageFormat.format("Inside getMoviesByCreatedDate of MovieController {0} {1} {2}", startYear, endYear, emailAddress));
@@ -117,14 +117,14 @@ public class MovieController {
 
         List<Movie> movies = movieService.fetchByReleaseYearBetween(movieStartYear, movieEndYear, minimumRating, minimumVotes);
 
-        ApiResponse apiResponse = buildResponse(movies,emailAddress,MessageFormat.format("Movies from {0} to {1}", startYear, endYear));
+        ApiResponse apiResponse = buildResponse(movies, emailAddress, MessageFormat.format("Movies from {0} to {1}", startYear, endYear));
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     //  Get recommendations for a specified genre
     @GetMapping("/movies/genre/{genre}")
     public ResponseEntity<ApiResponse> getMoviesByGenre(@PathVariable("genre") String genre,
-                                           @RequestParam(value = "emailAddress", defaultValue = "") String emailAddress)
+                                                        @RequestParam(value = "emailAddress", defaultValue = "") String emailAddress)
             throws NoRecommendationsException, IOException {
 
         LOGGER.info(MessageFormat.format("Inside getMoviesByGenre of MovieController {0} {1}", genre, emailAddress));
@@ -134,7 +134,7 @@ public class MovieController {
         }
 
         List<Movie> movies = movieService.fetchByGenre(GenreEnum.valueOf(genre.toUpperCase()).getName(), minimumRating, minimumVotes);
-        ApiResponse apiResponse = buildResponse(movies,emailAddress,MessageFormat.format("Movies for the {0} genre", genre));
+        ApiResponse apiResponse = buildResponse(movies, emailAddress, MessageFormat.format("Movies for the {0} genre", genre));
 
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
@@ -142,8 +142,10 @@ public class MovieController {
 
     //  Get recommendations for a specified person
     @GetMapping("/movies/person/{name}")
-    public ResponseEntity<ApiResponse> getMoviesByPerson(@PathVariable("name") String name) throws NoRecommendationsException {
-        LOGGER.info("Inside getMoviesByGenre of MovieController");
+    public ResponseEntity<ApiResponse> getMoviesByPerson(@PathVariable("name") String name,
+                                                         @RequestParam(value = "emailAddress", defaultValue = "") String emailAddress)
+            throws NoRecommendationsException, IOException {
+        LOGGER.info(MessageFormat.format("Inside getMoviesByGenre of MovieController {0} {1}", name, emailAddress));
 
         List<Person> person = personService.fetchByPrimaryName(name);
 
@@ -154,22 +156,24 @@ public class MovieController {
         List<String> movieIds = Arrays.asList(person.get(0).getKnownForMovies().split(",", -1));
 
         List<Movie> movies = movieService.fetchByMovieId(movieIds);
+        ApiResponse apiResponse = buildResponse(movies, emailAddress, MessageFormat.format("Movies for {0} ", name));
 
-        if (movies.isEmpty()) {
-            throw new NoRecommendationsException("No recommendations found");
-        }
-
-        ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
+    //  Get recommendations for a by a word in the movie name
     @GetMapping("/movies/name/{name}")
-    public ResponseEntity<ApiResponse> fetchMovieByName(@PathVariable("name") String movieName) throws NoRecommendationsException {
+    public ResponseEntity<ApiResponse> getMovieByName(@PathVariable("name") String movieName,
+                                                        @RequestParam(value = "emailAddress", defaultValue = "") String emailAddress)
+            throws NoRecommendationsException, IOException {
+
+        LOGGER.info(MessageFormat.format("Inside getMovieByName of MovieController {0} {1}", movieName, emailAddress));
+
         List<Movie> movies = movieService.fetchMovieByName(movieName, minimumRating, minimumVotes);
         if (movies.isEmpty()) {
             throw new NoRecommendationsException("No recommendations found");
         }
-        ApiResponse apiResponse = new ApiResponse("Movies recommended", true, movies);
+        ApiResponse apiResponse = buildResponse(movies, emailAddress, MessageFormat.format("Movies for {0} ", movieName));
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }
